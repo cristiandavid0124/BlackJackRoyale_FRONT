@@ -1,17 +1,23 @@
-// src/App.js
-import React from 'react';
-import './App.css';
+import React, { useState } from 'react';
 import Register from './components/Register';
+import Login from './components/Login';
 
-function App() {
+const App = () => {
+    const [isLogin, setIsLogin] = useState(true); // Estado para alternar entre Login y Register
+
+    const toggleForm = () => {
+        setIsLogin(!isLogin);
+    };
+
     return (
-        <div className="App">
-            <header className="App-header">
-                <h1>BlackJack Royale</h1>
-            </header>
-            <Register />
+        <div>
+            <h1>{isLogin ? 'Iniciar Sesión' : 'Registro de Usuario'}</h1>
+            {isLogin ? <Login /> : <Register />}
+            <button onClick={toggleForm}>
+                {isLogin ? '¿No tienes una cuenta? Regístrate' : '¿Ya tienes una cuenta? Inicia sesión'}
+            </button>
         </div>
     );
-}
+};
 
 export default App;
