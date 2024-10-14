@@ -1,67 +1,47 @@
-// src/Register.js
 import React, { useState } from 'react';
-import axios from 'axios';
 
-const Register = () => {
+function Register() {
     const [email, setEmail] = useState('');
     const [name, setName] = useState('');
-    const [password, setPassword] = useState('');
-    const [message, setMessage] = useState('');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        
+        const user = { email, name };
+
         try {
-            const response = await axios.post('http://localhost:8080/blackjack/register', {
-                email,
-                name,
-                password,
+            const response = await fetch('http://localhost:8080/api/users/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(user),
             });
-            setMessage(response.data);
-            setEmail('');
-            setName('');
-            setPassword('');
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Usuario registrado:', data);
+            } else {
+                console.error('Error al registrar usuario:', response.statusText);
+            }
         } catch (error) {
-            console.error('There was an error registering the user!', error);
-            setMessage('Error registering user');
+            console.error('Error de red:', error);
         }
     };
 
     return (
-        <div>
-            <h2>Register</h2>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>Email:</label>
-                    <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                    />
-                </div>
-                <div>
-                    <label>Name:</label>
-                    <input
-                        type="text"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        required
-                    />
-                </div>
-                <div>
-                    <label>Password:</label>
-                    <input
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                    />
-                </div>
-                <button type="submit">Register</button>
-            </form>
-            {message && <p>{message}</p>}
-        </div>
+        <form onSubmit={handleSubmit}>
+            <label>
+                Nombre:
+                <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
+            </label>
+            <label>
+                Correo Electrónico:
+                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+            </label>
+            <button type="submit">Registrar</button>
+        </form>
     );
-};
+}
 
 export default Register;
