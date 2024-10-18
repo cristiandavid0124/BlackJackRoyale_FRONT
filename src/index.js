@@ -5,7 +5,7 @@ import { PublicClientApplication, EventType } from '@azure/msal-browser';
 import { msalConfig } from './authConfig';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './styles/index.css';
+
 
 /**
  * MSAL should be instantiated outside of the component tree to prevent it from being re-instantiated on re-renders.

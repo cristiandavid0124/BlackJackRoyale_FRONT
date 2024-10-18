@@ -22,7 +22,10 @@ export const NavigationBar = () => {
         <>
             <Navbar bg="primary" variant="dark" className="navbarStyle">
                 <a className="navbar-brand" href="/">
-                    Microsoft identity platform
+                    BlackJack-UserInfo
+                </a>
+                <a className="navbar-brand" href="/BlackRoyale">
+                    BlackJack-Game
                 </a>
                 <AuthenticatedTemplate>
                     <div className="collapse navbar-collapse justify-content-end">
