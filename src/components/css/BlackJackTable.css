@@ -1,0 +1,218 @@
+.table-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #0b0c10;
+  }
+  
+  .table {
+    position: relative;
+    width: 100vw; /* Asegura que la tabla ocupe todo el ancho de la ventana */
+    height: 100vh; /* Asegura que la tabla ocupe todo el alto de la ventana */
+    background-color: #066235; /* Cambia esto al color que desees */
+    overflow: hidden;
+}
+  
+  .arc-text {
+    position: absolute;
+    top: 10%;
+    width: 100%;
+    text-align: center;
+  }
+  
+  .blackjack-text, .insurance-text {
+    color: #fff;
+    font-size: 1.2rem;
+  }
+  
+  .blackjack-text {
+    margin-bottom: 0.5rem;
+  }
+  
+  .card-slots {
+    display: flex; /* Utiliza flexbox para alinear los slots en fila */
+    justify-content: flex-start; /* Alinea los slots al inicio sin espacio entre ellos */
+    align-items: flex-end; /* Alinea los slots en la parte inferior del contenedor */
+    width: 100%; /* O ajusta al tamaño deseado */
+    height: 100%; /* O ajusta al tamaño deseado */
+    position: relative; /* Necesario para que los slots se posicionen correctamente */
+    margin-top: -520px; /* Ajusta este valor para mover los slots hacia arriba */
+    margin-left: 30px; /* Ajusta este valor para mover los slots hacia la derecha */
+}
+
+.card-slot {
+    width: 4vw; /* Ajusta el ancho */
+    height: 12vh; /* Ajusta la altura */
+    border: 3px solid yellow;
+    border-radius: 10%;
+    margin: 0; /* Asegúrate de que no haya espaciado entre los slots */
+}
+  
+  /* Posicionar las fichas */
+  .fichas {
+    position: absolute;
+    top: 80%; /* Cambia este valor para moverlas hacia arriba o abajo */
+    left: 10%; /* Ajusta esto para moverlas a la izquierda o derecha */
+    transform: translateX(-50%); /* Centra las fichas horizontalmente */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    gap: 1rem;
+}
+
+/* Estilo general para todas las fichas */
+.ficha {
+    width: 55px; /* Ancho de las fichas */
+    height: 55px; /* Alto de las fichas */
+}
+
+  
+/* Posicionar la mesa */
+  .Mesa {
+    position: absolute;
+    top: 58%; /* Coloca el elemento en el 50% del alto de la pantalla */
+    left: 55%; /* Coloca el elemento en el 50% del ancho de la pantalla */
+    transform: translate(-50%, -50%); /* Ajusta la posición para centrarlo completamente */
+    display: flex;
+    justify-content: center;
+    width: 100%; /* Puedes ajustar este ancho según sea necesario */
+    gap: 1rem;
+  }
+  
+  .mesa {
+    width: 1100px;
+    height: 800px;
+    position: relative; /* Asegúrate de que la mesa tenga posición relativa */
+} 
+
+.mesa-text {
+    font-family: Georgia, serif; /* Aplica Georgia al texto del cuerpo */
+    font-size: 2rem; /* Aumenta el tamaño del texto */
+    position: absolute; /* Posiciona el texto de manera absoluta */
+    top: -3%; /* Ajusta este valor para moverlo verticalmente */
+    left: 50%; /* Centra horizontalmente */
+    transform: translateX(-50%); /* Ajusta la posición horizontalmente */
+    color: white; /* Cambia el color del texto si es necesario */
+    text-align: center; /* Centra el texto */
+    z-index: 1; /* Asegúrate de que esté por encima de otros elementos */
+}
+
+.mano-text {
+    font-family: Georgia, serif; /* Aplica Georgia al texto del cuerpo */
+    font-size: 2rem; /* Aumenta el tamaño del texto */
+    position: absolute; /* Posiciona el texto de manera absoluta */
+    top: -3%; /* Ajusta este valor para moverlo verticalmente */
+    left: 90%; /* Centra horizontalmente */
+    transform: translateX(-50%); /* Ajusta la posición horizontalmente */
+    color: white; /* Cambia el color del texto si es necesario */
+    text-align: center; /* Centra el texto */
+    z-index: 1; /* Asegúrate de que esté por encima de otros elementos */
+}
+
+  .table-header {
+    display: flex;
+    justify-content: space-between; /* Espacio entre el logo y el info */
+    align-items: center; /* Alinea verticalmente al centro */
+    padding: 0.2rem 0.5rem; /* Reduce el padding para hacer el header más pequeño */
+    background-color: black; /* Fondo oscuro */
+    color: white;
+    width: 100vw; /* Asegura que el header cubra todo el ancho de la ventana */
+    position: fixed; /* Hace que el header siempre esté en la parte superior */
+    top: 0; /* Posiciona el header en la parte superior de la pantalla */
+    left: 0;
+    z-index: 1000; /* Asegura que el header esté sobre otros elementos */
+  }
+  
+  .header-info {
+    display: flex; /* Usamos Flexbox */
+    justify-content: space-between; /* Espacia los elementos */
+    width: 100%; /* Permite que el contenedor ocupe todo el ancho */
+  }
+  
+  .header-info-left,
+  .header-info-center,
+  .header-info-right {
+      flex: 0.5; /* Reduce el espacio que ocupa cada sección */
+      text-align: center; /* Centra el texto en cada sección */
+      padding: 0 0.5rem; /* Añade un pequeño padding para separarlos del borde */
+  }
+  
+  .header-logo .logo-header {
+      height: 80px; /* Ajusta el tamaño del logo para que no ocupe tanto espacio */
+  }
+  
+  .header-info-left {
+      text-align: left; /* Alinea el saldo a la izquierda */
+  }
+  
+  .header-info-right {
+      text-align: right; /* Alinea el premio a la derecha */
+  }
+  
+  .header-info p {
+      margin: 0; /* Elimina márgenes para un mejor espaciado */
+      font-size: 1.4rem; /* Reduce el tamaño de la fuente */
+      padding: 0; /* Asegura que no haya padding adicional en los párrafos */
+  }
+  
+  /* Ajusta el espaciado en el header */
+  .table-header {
+      padding: 0.5rem; /* Añade padding al header si es necesario */
+  }
+  
+
+
+.boton-apostar {
+    background-color: #000000; /* Color de fondo */
+    color: white; /* Color del texto */
+    border: none; /* Sin borde */
+    padding: 10px 20px; /* Espaciado interno */
+    text-align: center; /* Centra el texto */
+    text-decoration: none; /* Sin subrayado */
+    display: inline-block; /* Hace que el botón se comporte como un bloque */
+    font-size: 1rem; /* Tamaño de la fuente */
+    cursor: pointer; /* Cambia el cursor al pasar el mouse */
+    border-radius: 20px; /* Bordes redondeados */
+    transition: transform 0.1s ease, background-color 0.1s ease; /* Transición para el efecto */
+    font-family: Georgia, serif; /* Aplica Georgia al texto del cuerpo */
+    position: absolute; /* Permite mover los botones a una posición específica */
+    bottom: 60px; /* Ajusta la distancia desde la parte inferior de la mesa */
+    left: 10%; /* Centra horizontalmente */
+    transform: translateX(-50%); /* Ajusta la posición horizontalmente */
+    display: flex; /* Permite alinear los botones */
+    gap: 10px; /* Espacio entre botones */
+}
+
+.boton-robar {
+    background-color: #000000; /* Color de fondo */
+    color: white; /* Color del texto */
+    border: none; /* Sin borde */
+    padding: 10px 20px; /* Espaciado interno */
+    text-align: center; /* Centra el texto */
+    text-decoration: none; /* Sin subrayado */
+    display: inline-block; /* Hace que el botón se comporte como un bloque */
+    font-size: 1rem; /* Tamaño de la fuente */
+    cursor: pointer; /* Cambia el cursor al pasar el mouse */
+    border-radius: 20px; /* Bordes redondeados */
+    transition: transform 0.1s ease, background-color 0.1s ease; /* Transición para el efecto */
+    font-family: Georgia, serif; /* Aplica Georgia al texto del cuerpo */
+    position: absolute; /* Permite mover los botones a una posición específica */
+    bottom: 450px; /* Ajusta la distancia desde la parte inferior de la mesa */
+    left: 10%; /* Centra horizontalmente */
+    transform: translateX(-50%); /* Ajusta la posición horizontalmente */
+    display: flex; /* Permite alinear los botones */
+    gap: 10px; /* Espacio entre botones */
+}
+
+.boton-robar:active, .boton-apostar:active {
+    transform: scale(0.95); /* Reduce el tamaño al hacer clic */
+    background-color: #333333; /* Color de fondo al hacer clic */
+}
+
+.action-button:hover {
+    background-color: #000000; /* Cambia el color al pasar el mouse */
+}
+
+
