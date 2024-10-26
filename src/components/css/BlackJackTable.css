@@ -53,7 +53,7 @@
   .fichas {
     position: absolute;
     top: 80%; /* Cambia este valor para moverlas hacia arriba o abajo */
-    left: 10%; /* Ajusta esto para moverlas a la izquierda o derecha */
+    left: 15%; /* Ajusta esto para moverlas a la izquierda o derecha */
     transform: translateX(-50%); /* Centra las fichas horizontalmente */
     display: flex;
     flex-wrap: wrap;
@@ -64,8 +64,23 @@
 
 /* Estilo general para todas las fichas */
 .ficha {
-    width: 55px; /* Ancho de las fichas */
-    height: 55px; /* Alto de las fichas */
+  width: 55px;
+  height: 55px;
+  transition: transform 0.1s ease, box-shadow 0.1s ease; /* Suaviza la transición de escala y sombra */
+  cursor: pointer; /* Cambia el cursor al pasar el mouse */
+}
+
+.ficha:active {
+  transform: scale(0.92); /* Reduce más el tamaño al hacer clic */
+  box-shadow: 0 0 5px rgba(231, 231, 231, 0.5) inset; /* Agrega una sombra interior para simular la presión */
+}
+
+.ficha-valor {
+  font-family: Georgia, serif; /* Aplica Georgia al texto del cuerpo */
+  color: white;
+  font-size: 1.5rem;
+  margin-top: 0.3rem; /* Espacio entre la ficha y el texto */
+  text-align: center;
 }
 
   
@@ -179,7 +194,7 @@
     font-family: Georgia, serif; /* Aplica Georgia al texto del cuerpo */
     position: absolute; /* Permite mover los botones a una posición específica */
     bottom: 60px; /* Ajusta la distancia desde la parte inferior de la mesa */
-    left: 10%; /* Centra horizontalmente */
+    left: 13.5%; /* Centra horizontalmente */
     transform: translateX(-50%); /* Ajusta la posición horizontalmente */
     display: flex; /* Permite alinear los botones */
     gap: 10px; /* Espacio entre botones */
