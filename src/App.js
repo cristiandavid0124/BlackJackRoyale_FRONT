@@ -1,56 +1,57 @@
-import { MsalProvider, AuthenticatedTemplate, useMsal, UnauthenticatedTemplate } from '@azure/msal-react';
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { Container, Button } from 'react-bootstrap';
+import { MsalProvider, useMsal } from '@azure/msal-react';
+import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import { Container } from 'react-bootstrap';
 import { IdTokenData } from './components/DataDisplay';
-import { loginRequest } from './authConfig';
 import BlackJackTable from "./components/BlackJackTable";
-
-
+import Login from './components/Login';
+import ProtectedRoute from './components/ProtectedRoute'; // Importar el componente ProtectedRoute
 
 const MainContent = () => {
     const { instance } = useMsal();
     const activeAccount = instance.getActiveAccount();
 
-    const handleRedirect = () => {
-        instance
-            .loginRedirect({
-                ...loginRequest,
-                prompt: 'create',
-            })
-            .catch((error) => console.log(error));
-    };
     return (
         <div className="App">
           <Router>
             <Routes>
-              {/* Ruta principal o cualquier otra */}
+              {/* Ruta inicial / */}
               <Route
                 path="/"
                 element={
-                  <>
-                    <AuthenticatedTemplate>
-                      {activeAccount ? (
-                        <Container>
-                          <IdTokenData idTokenClaims={activeAccount.idTokenClaims} />
-                        </Container>
-                      ) : null}
-                    </AuthenticatedTemplate>
-                    <UnauthenticatedTemplate>
-                      <Button className="signInButton" onClick={handleRedirect} variant="primary">
-                        Sign up
-                      </Button>
-                    </UnauthenticatedTemplate>
-                  </>
+                  activeAccount ? (
+                    <Navigate to="/UserInfo" replace /> // Redirigir a UserInfo si ya está logueado
+                  ) : (
+                    <Login /> // Mostrar login si no está autenticado
+                  )
                 }
               />
-    
-              {/* Nueva ruta para BlackRoyale */}
-              <Route path="/BlackRoyale" element={<BlackJackTable />} />
+
+              {/* Ruta protegida para UserInfo */}
+              <Route
+                path="/UserInfo"
+                element={
+                  <ProtectedRoute>
+                    <Container>
+                      <IdTokenData idTokenClaims={activeAccount?.idTokenClaims} />
+                    </Container>
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Ruta protegida para el juego */}
+              <Route
+                path="/Game"
+                element={
+                  <ProtectedRoute>
+                    <BlackJackTable />
+                  </ProtectedRoute>
+                }
+              />
             </Routes>
           </Router>
         </div>
-      );
-    };
+    );
+};
 
 const App = ({ instance }) => {
     return (

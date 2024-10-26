@@ -1,0 +1,58 @@
+/* NavigationBar.css */
+
+.navbarStyle {
+    background-color: #1a1a1a; /* Fondo gris oscuro */
+    color: #f0f0f0;
+    padding: 10px 20px;
+    width: 100vw; /* Ocupa el 100% del ancho de la ventana */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+    position: fixed; /* Fija la barra en la parte superior */
+    top: 0;
+    left: 0;
+    z-index: 1000; /* Asegura que esté por encima del resto del contenido */
+}
+
+.navbar-brand {
+    color: #f0f0f0; /* Color blanco para el texto */
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-right: 20px;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.navbar-brand:hover {
+    color: #00bcd4; /* Azul claro en hover */
+    text-decoration: underline;
+}
+
+.auth-button {
+    font-size: 1rem;
+    font-weight: bold;
+    padding: 8px 16px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Botón de Sign Out */
+.auth-button.btn-warning {
+    background-color: #d9534f; /* Rojo para Sign out */
+    color: #f0f0f0;
+    border: none;
+}
+
+.auth-button.btn-warning:hover {
+    background-color: #c9302c; /* Rojo más oscuro en hover */
+    transform: scale(1.05); /* Crecimiento ligero en hover */
+}
+
+.auth-button:not(.btn-warning) {
+    background-color: #004080; /* Azul oscuro */
+    color: #f0f0f0;
+    border: none;
+}
+
+.auth-button:not(.btn-warning):hover {
+    background-color: #00264d; /* Azul más oscuro en hover */
+    transform: scale(1.05); /* Crecimiento ligero en hover */
+}
