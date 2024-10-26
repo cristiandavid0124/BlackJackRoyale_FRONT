@@ -48,7 +48,7 @@
     border-radius: 10%;
     margin: 0; /* Asegúrate de que no haya espaciado entre los slots */
 }
-  
+
   /* Posicionar las fichas */
   .fichas {
     position: absolute;
@@ -108,18 +108,6 @@
     position: absolute; /* Posiciona el texto de manera absoluta */
     top: -3%; /* Ajusta este valor para moverlo verticalmente */
     left: 50%; /* Centra horizontalmente */
-    transform: translateX(-50%); /* Ajusta la posición horizontalmente */
-    color: white; /* Cambia el color del texto si es necesario */
-    text-align: center; /* Centra el texto */
-    z-index: 1; /* Asegúrate de que esté por encima de otros elementos */
-}
-
-.mano-text {
-    font-family: Georgia, serif; /* Aplica Georgia al texto del cuerpo */
-    font-size: 2rem; /* Aumenta el tamaño del texto */
-    position: absolute; /* Posiciona el texto de manera absoluta */
-    top: -3%; /* Ajusta este valor para moverlo verticalmente */
-    left: 90%; /* Centra horizontalmente */
     transform: translateX(-50%); /* Ajusta la posición horizontalmente */
     color: white; /* Cambia el color del texto si es necesario */
     text-align: center; /* Centra el texto */

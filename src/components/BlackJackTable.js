@@ -27,17 +27,20 @@ const BlackjackTable = () => {
 
   // Manejar el clic en una ficha
   const agregarApuesta = (valor) => {
-    if (apuestaActual + valor > 100) {
-      alert('La apuesta no puede ser mayor que 100');
-      return;
-    }
-    
-    if (saldo >= valor) {
-      setApuestaActual(apuestaActual + valor);
-      setSaldo(saldo - valor);
-    } else {
-      alert('Saldo insuficiente para esta apuesta');
-    }
+    setApuestaActual((prevApuestaActual) => {
+      const nuevaApuesta = prevApuestaActual + valor;
+      if (nuevaApuesta > 100) {
+        alert('La apuesta no puede ser mayor que 100');
+        return prevApuestaActual;
+      }
+      if (saldo >= valor) {
+        setSaldo((prevSaldo) => prevSaldo - valor);
+        return nuevaApuesta;
+      } else {
+        alert('Saldo insuficiente para esta apuesta');
+        return prevApuestaActual;
+      }
+    });
   };
 
   // Manejar el clic en el botón de apostar
@@ -75,7 +78,6 @@ const BlackjackTable = () => {
 
         {/* Slots para las cartas */}
         <div className="card-slots">
-          <p className="mano-text">Tu mano</p>
           <img src={Bitmap1} alt="Carta1" className="card-slot" />
           <img src={Bitmap39} alt="Carta2" className="card-slot" />
           <div className="card-slot"></div>
