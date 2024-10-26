@@ -24,11 +24,11 @@ export const IdTokenData = () => {
             {/* Barra de navegación con el logo, un enlace y el componente BotonAuth */}
             <Navbar bg="dark" variant="dark" expand="lg" className="navbarStyle">
                 <Container>
-                    <Navbar.Brand href="/">BlackJackApp</Navbar.Brand>
+                    <Navbar.Brand href="/BlackJackRoyale/UserInfo">BlackJackApp</Navbar.Brand>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="me-auto">
-                            <Nav.Link href="/Game">Juego</Nav.Link> {/* Enlace a la ruta adicional */}
+                            <Nav.Link href="/BlackJackRoyale/Game">Juego</Nav.Link> {/* Enlace a la ruta adicional */}
                         </Nav>
                         <BotonAuth /> {/* Componente para manejar login/logout */}
                     </Navbar.Collapse>

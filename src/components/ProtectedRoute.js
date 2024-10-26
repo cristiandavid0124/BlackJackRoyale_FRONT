@@ -6,7 +6,7 @@ const ProtectedRoute = ({ children }) => {
     const activeAccount = instance.getActiveAccount();
 
     // Si el usuario no está autenticado, redirige a la página de inicio de sesión
-    return activeAccount ? children : <Navigate to="/" />;
+    return activeAccount ? children : <Navigate to="/BlackJackRoyale" />;
 };
 
 export default ProtectedRoute;

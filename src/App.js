@@ -16,10 +16,10 @@ const MainContent = () => {
             <Routes>
               {/* Ruta inicial / */}
               <Route
-                path="/"
+                path="/BlackJackRoyale"
                 element={
                   activeAccount ? (
-                    <Navigate to="/UserInfo" replace /> // Redirigir a UserInfo si ya está logueado
+                    <Navigate to="/BlackJackRoyale/UserInfo" replace /> // Redirigir a UserInfo si ya está logueado
                   ) : (
                     <Login /> // Mostrar login si no está autenticado
                   )
@@ -28,7 +28,7 @@ const MainContent = () => {
 
               {/* Ruta protegida para UserInfo */}
               <Route
-                path="/UserInfo"
+                path="/BlackJackRoyale/UserInfo"
                 element={
                   <ProtectedRoute>
                     <Container>
@@ -40,7 +40,7 @@ const MainContent = () => {
 
               {/* Ruta protegida para el juego */}
               <Route
-                path="/Game"
+                path="/BlackJackRoyale/Game"
                 element={
                   <ProtectedRoute>
                     <BlackJackTable />
