@@ -1,7 +1,7 @@
 import { AuthenticatedTemplate, UnauthenticatedTemplate, useMsal } from '@azure/msal-react';
 import { Button } from 'react-bootstrap';
 import { loginRequest } from '../authConfig';
-import '../styles/NavigationBar.css';
+import '../styles/BotonAuth.css';
 
 export const BotonAuth = () => { // Cambia el nombre del componente a BotonAuth
     const { instance } = useMsal();

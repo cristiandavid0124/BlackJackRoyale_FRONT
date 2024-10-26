@@ -1,0 +1,61 @@
+/* Estilo de fondo general */
+body {
+    background-color: #000;
+    color: #fff;
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Contenedor principal para centrar la tarjeta */
+.user-info-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 80px; /* Aumenta el margen superior para bajar la caja */
+}
+
+/* Tarjeta de usuario ampliada */
+.user-card {
+    background-color: #333;
+    color: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.2);
+    max-width: 500px;
+    text-align: left;
+}
+
+/* Estilo para el título */
+.user-card h2 {
+    margin-bottom: 25px;
+    color: #ffeb3b;
+    text-align: left;
+}
+
+/* Detalles del usuario alineados a la izquierda */
+.user-details p {
+    font-size: 1.2em;
+    margin: 10px 0;
+    text-align: left;
+}
+
+/* Color personalizado para etiquetas */
+.user-details strong {
+    color: #ff9800;
+}
+
+/* Estilo para el campo de entrada de recarga y nickname */
+.reload-input,
+.nickname-input {
+    margin-left: 10px;
+    padding: 5px;
+    width: 150px;
+    background-color: #444;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    text-align: left;
+}
+
+

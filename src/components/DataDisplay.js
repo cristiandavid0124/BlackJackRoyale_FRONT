@@ -1,93 +1,78 @@
-import { useState } from 'react';
-import { Form, Button, Card, Navbar, Nav, Container } from 'react-bootstrap';
-import BotonAuth from './BotonAuth'; // Importar el componente BotonAuth
-import '../styles/Data.css';
+import React, { useState } from 'react';
+import { Button } from 'react-bootstrap';
+import { getNameAndUsername } from '../utils/claimUtils';
+import BotonAuth from './BotonAuth';
+import './css/Data.css';
+import logo from './img/logoo.png';
 
-export const IdTokenData = () => {
-    const [reloadAmount, setReloadAmount] = useState('');
-    const [nickname, setNickname] = useState('');
-    const [balance, setBalance] = useState(0);
-    const [recentGames, setRecentGames] = useState(['BlackJack']); // Ejemplo de datos de juegos recientes
+export const IdTokenData = (props) => {
+    const { name, preferred_username } = getNameAndUsername(props.idTokenClaims);
 
-    const handleReloadChange = (event) => {
-        setReloadAmount(event.target.value);
-    };
+    // Estado para la recarga, ganancias y nickname
+    const [reload, setReload] = useState(500); // Valor inicial de recarga
+    const [earnings, setEarnings] = useState(1500); // Valor inicial de ganancias
+    const [nickname, setNickname] = useState("Player123"); // Valor inicial del nickname
 
-    const handleReloadSubmit = (event) => {
-        event.preventDefault();
-        alert(`Recargando ${reloadAmount} a la cuenta de ${nickname}`);
-        setReloadAmount('');
-    };
+    // Manejadores de cambio de valor
+    const handleReloadChange = (e) => setReload(e.target.value);
+    const handleNicknameChange = (e) => setNickname(e.target.value);
 
     return (
         <>
-            {/* Barra de navegación con el logo, un enlace y el componente BotonAuth */}
-            <Navbar bg="dark" variant="dark" expand="lg" className="navbarStyle">
-                <Container>
-                    <Navbar.Brand href="/BlackJackRoyale/UserInfo">BlackJackApp</Navbar.Brand>
-                    <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                    <Navbar.Collapse id="basic-navbar-nav">
-                        <Nav className="me-auto">
-                            <Nav.Link href="/BlackJackRoyale/Game">Juego</Nav.Link> {/* Enlace a la ruta adicional */}
-                        </Nav>
-                        <BotonAuth /> {/* Componente para manejar login/logout */}
-                    </Navbar.Collapse>
-                </Container>
-            </Navbar>
+            {/* Barra de Navegación */}
+            <header className="table-header">
+                <div className="header-logo">
+                    <img src={logo} alt="Logo" className="logo-header" />
+                </div>
+                <div className="header-info-right">
+                    <BotonAuth />
+                </div>
+            </header>
 
-            <div className="data-area-div">
-                <Card className="user-card">
-                    <Card.Body>
-                        <Card.Title>Bienvenido, {nickname || 'Usuario'}</Card.Title>
-                        <Card.Subtitle className="mb-2 text-muted">Saldo: ${balance}</Card.Subtitle>
+            {/* Tarjeta de perfil del usuario */}
+            <div className="user-info-container">
+                <div className="user-card">
+                    <h2>👤 Player Profile</h2>
+                    <div className="user-details">
+                        <p><strong>Name:</strong> {name}</p>
+                        <p><strong>Username:</strong> {preferred_username}</p>
+                        
+                        {/* Campo de entrada para el Nickname */}
+                        <p>
+                            <strong>Nickname:</strong>
+                            <input
+                                type="text"
+                                value={nickname}
+                                onChange={handleNicknameChange}
+                                className="nickname-input"
+                            />
+                        </p>
 
-                        <Card.Text>
-                            <strong>Juegos Recientes:</strong>
-                            <ul>
-                                {recentGames.map((game, index) => (
-                                    <li key={index}>{game}</li>
-                                ))}
-                            </ul>
-                        </Card.Text>
+                        <p><strong>Saldo:</strong> $1,000</p>
+                        
+                        {/* Casilla para mostrar y actualizar recarga */}
+                        <p>
+                            <strong>Recarga:</strong>
+                            <input
+                                type="number"
+                                value={reload}
+                                onChange={handleReloadChange}
+                                className="reload-input"
+                            />
+                        </p>
 
-                        <Form onSubmit={handleReloadSubmit} className="reload-form">
-                            <Form.Group controlId="nickname">
-                                <Form.Label>Nickname</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    placeholder="Ingrese su Nickname"
-                                    value={nickname}
-                                    onChange={(e) => setNickname(e.target.value)}
-                                />
-                            </Form.Group>
+                        {/* Casilla de ganancias */}
+                        <p><strong>Ganancias:</strong> ${earnings}</p>
+                    </div>
+                </div>
 
-                            <Form.Group controlId="balance">
-                                <Form.Label>Saldo</Form.Label>
-                                <Form.Control
-                                    type="number"
-                                    placeholder="Ingrese su Saldo"
-                                    value={balance}
-                                    onChange={(e) => setBalance(e.target.value)}
-                                />
-                            </Form.Group>
-
-                            <Form.Group controlId="reloadAmount">
-                                <Form.Label>Recargar Saldo</Form.Label>
-                                <Form.Control
-                                    type="number"
-                                    placeholder="Ingrese la cantidad"
-                                    value={reloadAmount}
-                                    onChange={handleReloadChange}
-                                />
-                            </Form.Group>
-
-                            <Button variant="primary" type="submit">
-                                Recargar
-                            </Button>
-                        </Form>
-                    </Card.Body>
-                </Card>
+                {/* Botón "Jugar" debajo de la tarjeta de perfil */}
+                <Button href="/BlackJackRoyale/Game" variant="warning" className="play-button">
+                    Jugar
+                </Button>
             </div>
         </>
     );
 };
+
+export default IdTokenData;

@@ -1,12 +1,10 @@
 import { LogLevel } from '@azure/msal-browser';
 
-
-
 export const msalConfig = {
     auth: {
         clientId: '066fef70-45bd-422a-a870-149ae2f088f4', // This is the ONLY mandatory field that you need to supply.
         authority: 'https://login.microsoftonline.com/common/v2.0', // Replace the placeholder with your tenant subdomain 
-        redirectUri: 'http://localhost:3000/', // Points to window.location.origin. You must register this URI on Microsoft Entra admin center/App Registration.
+        redirectUri: 'http://localhost:3000/BlackJackRoyale', // Points to window.location.origin. You must register this URI on Microsoft Entra admin center/App Registration.
         postLogoutRedirectUri: '/BlackJackRoyale', // Indicates the page to navigate after logout.
         navigateToLoginRequestUrl: false, // If "true", will navigate back to the original request location before processing the auth code response.
     },
