@@ -1,0 +1,18 @@
+/* SelectTable.css */
+.select-table-container {
+    text-align: center;
+    padding: 40px;
+    color: #ffeb3b;
+}
+
+.table-options {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+}
+
+.table-button {
+    width: 120px;
+    height: 60px;
+    font-size: 1.2em;
+}

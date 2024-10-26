@@ -2,16 +2,18 @@ import React, { useState } from 'react';
 import { Button } from 'react-bootstrap';
 import { getNameAndUsername } from '../utils/claimUtils';
 import BotonAuth from './BotonAuth';
+import { useNavigate } from 'react-router-dom';
 import './css/Data.css';
 import logo from './img/logoo.png';
 
 export const IdTokenData = (props) => {
     const { name, preferred_username } = getNameAndUsername(props.idTokenClaims);
+    const navigate = useNavigate();
 
     // Estado para la recarga, ganancias y nickname
-    const [reload, setReload] = useState(500); // Valor inicial de recarga
-    const [earnings, setEarnings] = useState(1500); // Valor inicial de ganancias
-    const [nickname, setNickname] = useState("Player123"); // Valor inicial del nickname
+    const [reload, setReload] = useState(500); 
+    const [earnings, setEarnings] = useState(1500); 
+    const [nickname, setNickname] = useState("Player123"); 
 
     // Manejadores de cambio de valor
     const handleReloadChange = (e) => setReload(e.target.value);
@@ -66,8 +68,8 @@ export const IdTokenData = (props) => {
                     </div>
                 </div>
 
-                {/* Botón "Jugar" debajo de la tarjeta de perfil */}
-                <Button href="/BlackJackRoyale/Game" variant="warning" className="play-button">
+                {/* Botón "Jugar" redirige a /BlackJackRoyale/SelectTable */}
+                <Button onClick={() => navigate('/BlackJackRoyale/SelectTable')} variant="warning" className="play-button">
                     Jugar
                 </Button>
             </div>
