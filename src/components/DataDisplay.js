@@ -3,7 +3,7 @@ import { Button } from 'react-bootstrap';
 import { getNameAndUsername } from '../utils/claimUtils';
 import BotonAuth from './BotonAuth';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios'; // Para hacer peticiones HTTP
+import axios from 'axios';
 import './css/Data.css';
 import logo from './img/logoo.png';
 
@@ -11,9 +11,10 @@ export const IdTokenData = (props) => {
     const { name, preferred_username } = getNameAndUsername(props.idTokenClaims);
     const navigate = useNavigate();
 
-    const [reload, setReload] = useState(500); 
-    const [earnings, setEarnings] = useState(1500); 
     const [nickname, setNickname] = useState("Player123"); 
+    const [nicknameSaved, setNicknameSaved] = useState(false); // Estado para verificar si el nickname está guardado
+    const [errorMessage, setErrorMessage] = useState(""); // Mensaje de error si el nickname no está guardado
+    const [nicknameError, setNicknameError] = useState(""); // Mensaje de error si el nickname no es válido
 
     // Verificar si el usuario existe y crearlo si no
     useEffect(() => {
@@ -25,6 +26,8 @@ export const IdTokenData = (props) => {
         
                 if (response.status === 200) {
                     console.log('Usuario encontrado:', response.data);
+                    setNickname(response.data.nickname || ""); // Establecer el nickname existente o vacío si no está
+                    setNicknameSaved(!!response.data.nickname); // Marcar como guardado si el nickname existe
                 }
             } catch (error) {
                 if (error.response && error.response.status === 404) {
@@ -33,13 +36,10 @@ export const IdTokenData = (props) => {
                         console.log('Enviando petición POST a http://localhost:8080/users');
                         const postResponse = await axios.post('http://localhost:8080/users', {
                             id: preferred_username,
-                            email: preferred_username,
-                            name: name,
-                            nickname: "Player123", // Valor inicial del nickname
-                            reload: 500,           // Valor inicial del saldo
-                            earnings: 1500         // Valor inicial de las ganancias
+                            name: name
                         });
                         console.log('Respuesta de POST:', postResponse.data);
+                        setNicknameSaved(true);
                     } catch (postError) {
                         console.error('Error al crear el usuario:', postError);
                     }
@@ -49,13 +49,53 @@ export const IdTokenData = (props) => {
             }
         };
         
-
         checkOrCreateUser();
     }, [preferred_username, name]);
 
-    const handleReloadChange = (e) => setReload(e.target.value);
-    const handleNicknameChange = (e) => setNickname(e.target.value);
+    const handleNicknameChange = (e) => {
+        const value = e.target.value;
+        setNickname(value);
+        setNicknameSaved(false); // Cambiar el estado de guardado si el usuario edita el nickname
 
+        // Validar si el nickname es válido
+        if (value.length < 3) {
+            setNicknameError("El Nickname debe tener al menos 3 caracteres");
+        } else {
+            setNicknameError("");
+        }
+    };
+
+    // Guardar el nickname cuando se hace clic en el botón "Save"
+    const handleSaveNickname = async () => {
+        if (nickname.length < 3) {
+            setNicknameError("El Nickname debe tener al menos 3 caracteres");
+            return;
+        }
+        try {
+            const response = await axios.put(`http://localhost:8080/users/${preferred_username}`, { nickname });
+            console.log("Nickname guardado:", response.data);
+            setNicknameSaved(true); // Marcar el nickname como guardado
+            setErrorMessage(""); // Limpiar el mensaje de error si existe
+        } catch (error) {
+            console.error("Error al guardar el nickname:", error);
+        }
+    };
+
+    // Manejar el clic en el botón "Jugar"
+    const handlePlayClick = () => {
+        if (!nicknameSaved) {
+            setErrorMessage("Tienes que crear tu NickName antes de jugar");
+        } else {
+            // Enviar solo id y name
+            navigate('/BlackJackRoyale/SelectTable', {
+                state: {
+                    id: preferred_username,
+                    name: nickname,
+                },
+            });
+        }
+    };
+    
     return (
         <>
             {/* Barra de Navegación */}
@@ -74,7 +114,7 @@ export const IdTokenData = (props) => {
                     <h2>👤 Player Profile</h2>
                     <div className="user-details">
                         <p><strong>Name:</strong> {name}</p>
-                        <p><strong>Username:</strong> {preferred_username}</p>
+                        <p><strong>Email:</strong> {preferred_username}</p>
                         
                         {/* Campo de entrada para el Nickname */}
                         <p>
@@ -86,27 +126,28 @@ export const IdTokenData = (props) => {
                                 className="nickname-input"
                             />
                         </p>
-
-                        <p><strong>Saldo:</strong> $1,000</p>
-                        
-                        {/* Casilla para mostrar y actualizar recarga */}
-                        <p>
-                            <strong>Recarga:</strong>
-                            <input
-                                type="number"
-                                value={reload}
-                                onChange={handleReloadChange}
-                                className="reload-input"
-                            />
-                        </p>
-
-                        {/* Casilla de ganancias */}
-                        <p><strong>Ganancias:</strong> ${earnings}</p>
+                        {nicknameError && <p className="error-message">{nicknameError}</p>}
+                        <Button 
+                            onClick={handleSaveNickname} 
+                            variant="primary" 
+                            className="save-button"
+                            disabled={nickname.length < 3} // Deshabilitar si el nickname no es válido
+                        >
+                            Save
+                        </Button>
                     </div>
                 </div>
 
+                {/* Mostrar mensaje de error si el nickname no está guardado */}
+                {errorMessage && <p className="error-message">{errorMessage}</p>}
+
                 {/* Botón "Jugar" redirige a /BlackJackRoyale/SelectTable */}
-                <Button onClick={() => navigate('/BlackJackRoyale/SelectTable')} variant="warning" className="play-button">
+                <Button 
+                    onClick={handlePlayClick} 
+                    variant="warning" 
+                    className="play-button" 
+                    disabled={!nicknameSaved} // Deshabilitado si no hay nickname guardado
+                >
                     Jugar
                 </Button>
             </div>

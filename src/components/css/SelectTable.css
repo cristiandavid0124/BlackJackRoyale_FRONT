@@ -2,7 +2,9 @@
 .select-table-container {
     text-align: center;
     padding: 40px;
+    background-color: #333;
     color: #ffeb3b;
+    min-height: 100vh;
 }
 
 .table-options {
@@ -16,3 +18,43 @@
     height: 60px;
     font-size: 1.2em;
 }
+
+.back-button {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    background-color: #888;
+    color: #fff;
+    border: none;
+}
+
+.back-button:hover {
+    background-color: #666;
+}
+
+.selected-table-message {
+    margin-top: 20px;
+    color: #fff;
+    font-size: 1.2em;
+}
+
+.go-to-table-button {
+    margin-top: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    font-size: 1em;
+    padding: 10px 20px;
+}
+
+.go-to-table-button:hover {
+    background-color: #0056b3;
+}
+
+body, html {
+    background-color: #333; /* Fondo oscuro para toda la pantalla */
+    color: #ffeb3b; /* Texto en amarillo para todo el contenido por defecto */
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+}
+
