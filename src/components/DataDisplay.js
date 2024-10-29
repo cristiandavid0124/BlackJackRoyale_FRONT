@@ -72,7 +72,6 @@ export const IdTokenData = (props) => {
           
             return;
         }
-
         setNicknameSaved(true);
     };
 
