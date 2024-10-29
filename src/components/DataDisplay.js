@@ -69,16 +69,11 @@ export const IdTokenData = (props) => {
     const handleSaveNickname = async () => {
         if (nickname.length < 3) {
             setNicknameError("El Nickname debe tener al menos 3 caracteres");
+          
             return;
         }
-        try {
-            const response = await axios.put(`http://localhost:8080/users/${preferred_username}`, { nickname });
-            console.log("Nickname guardado:", response.data);
-            setNicknameSaved(true); // Marcar el nickname como guardado
-            setErrorMessage(""); // Limpiar el mensaje de error si existe
-        } catch (error) {
-            console.error("Error al guardar el nickname:", error);
-        }
+
+        setNicknameSaved(true);
     };
 
     // Manejar el clic en el botón "Jugar"
