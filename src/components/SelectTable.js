@@ -28,6 +28,9 @@ const SelectTable = () => {
                 },
             });
         }
+
+        console.log(id)
+        console.log(name)
     };
 
     // Función para regresar a la pantalla anterior

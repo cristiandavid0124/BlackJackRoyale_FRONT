@@ -26,8 +26,8 @@ export const IdTokenData = (props) => {
         
                 if (response.status === 200) {
                     console.log('Usuario encontrado:', response.data);
-                    setNickname(response.data.nickname || ""); // Establecer el nickname existente o vacío si no está
-                    setNicknameSaved(!!response.data.nickname); // Marcar como guardado si el nickname existe
+                    setNickname(response.data.nickName || ""); // Establecer el nickname existente o vacío si no está
+                    setNicknameSaved(!!response.data.nickName); // Marcar como guardado si el nickname existe
                 }
             } catch (error) {
                 if (error.response && error.response.status === 404) {
@@ -43,9 +43,8 @@ export const IdTokenData = (props) => {
                             }
                         });
                         
-    
                         console.log('Respuesta de POST:', postResponse.data);
-                        setNicknameSaved(true);
+                        setNicknameSaved(false); // El nickname no está guardado inicialmente
                     } catch (postError) {
                         console.error('Error al crear el usuario:', postError);
                     }
@@ -58,7 +57,6 @@ export const IdTokenData = (props) => {
         checkOrCreateUser();
     }, [preferred_username, name]);
     
-
     const handleNicknameChange = (e) => {
         const value = e.target.value;
         setNickname(value);
@@ -76,10 +74,23 @@ export const IdTokenData = (props) => {
     const handleSaveNickname = async () => {
         if (nickname.length < 3) {
             setNicknameError("El Nickname debe tener al menos 3 caracteres");
-          
             return;
         }
-        setNicknameSaved(true);
+
+        try {
+            console.log(`Enviando petición PUT para actualizar nickname a http://localhost:8080/users/${preferred_username}`);
+            const putResponse = await axios.put(`http://localhost:8080/users/${preferred_username}`, {
+                nickName: nickname
+            }, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            console.log('Respuesta de PUT:', putResponse.data);
+            setNicknameSaved(true);
+        } catch (putError) {
+            console.error('Error al actualizar el nickname:', putError);
+        }
     };
 
     // Manejar el clic en el botón "Jugar"
@@ -125,17 +136,20 @@ export const IdTokenData = (props) => {
                                 value={nickname}
                                 onChange={handleNicknameChange}
                                 className="nickname-input"
+                                disabled={nicknameSaved} // Deshabilitar si el nickname ya está guardado
                             />
                         </p>
                         {nicknameError && <p className="error-message">{nicknameError}</p>}
-                        <Button 
-                            onClick={handleSaveNickname} 
-                            variant="primary" 
-                            className="save-button"
-                            disabled={nickname.length < 3} // Deshabilitar si el nickname no es válido
-                        >
-                            Save
-                        </Button>
+                        {!nicknameSaved && (
+                            <Button 
+                                onClick={handleSaveNickname} 
+                                variant="primary" 
+                                className="save-button"
+                                disabled={nickname.length < 3} // Deshabilitar si el nickname no es válido
+                            >
+                                Save
+                            </Button>
+                        )}
                     </div>
                 </div>
 
