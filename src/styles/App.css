@@ -1,0 +1,8 @@
+/* index.css */
+body, html, #root {
+    background-color: #333; /* Fondo oscuro para toda la pantalla */
+    color: #ffeb3b; /* Texto en amarillo para todo el contenido por defecto */
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+}

@@ -1,0 +1,200 @@
+.table-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+  background-color: #066235;
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.2rem 0.5rem;
+  background-color: black;
+  color: white;
+  width: 100vw;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+}
+
+.header-info {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.header-logo .logo-header {
+  height: 80px;
+}
+
+.main-container {
+  display: flex;
+  flex: 1;
+  width: 100%;
+  padding-top: 100px; /* Ajusta para el header */
+}
+
+.left-column {
+  flex: 3; /* 30% del ancho */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.right-column {
+  flex: 7; /* 70% del ancho */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card-slots {
+  display: flex;
+  flex-direction: row; /* Cambiado de column a row */
+  gap: 10px;
+  margin-top: 50px;
+}
+
+.card-slot {
+  width: 4vw;
+  height: 12vh;
+  border: 3px solid yellow;
+  border-radius: 10%;
+}
+
+.fichas {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.ficha {
+  width: 55px;
+  height: 55px;
+  cursor: pointer;
+}
+
+.boton-robar, .boton-apostar {
+  background-color: #000;
+  color: white;
+  padding: 10px 20px;
+  margin-top: 20px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.player-slot {
+  position: absolute;
+  width: 8vw; /* Ajusta el tamaño del contenedor */
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.player-info {
+  color: #000;
+  font-size: 0.8rem;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.player-chips {
+  display: flex;
+  gap: 0.3rem;
+  margin-bottom: 0.5rem;
+}
+
+.player-chip {
+  width: 10px;
+  height: 10px;
+}
+
+.player-cards {
+  display: flex;
+  flex-direction: row; /* Alinea las cartas en horizontal */
+  gap: -1vw; /* Ajusta el solapado entre cartas */
+}
+
+.player-card {
+  width: 3vw; /* Tamaño de la carta */
+  height: auto;
+  margin-left: -1.5vw; 
+}
+
+.mesa {
+  width: 85%;
+  height: auto;
+}
+
+.mesa-card-slot {
+  position: absolute;
+  width: 4vw; /* Tamaño de la carta */
+  height: 6vw; /* Ajusta el tamaño según tu imagen */
+
+}
+
+.mesa-text {
+  font-family: Georgia, serif;
+  font-size: 1.5rem; /* Reduce el tamaño de la fuente */
+  color: white;
+  text-align: center;
+  margin: 0.5rem 0; /* Reduce el margen superior e inferior */
+  padding: 0.2rem 0.5rem; /* Reduce el padding alrededor */
+  position: absolute;
+  top: -2%; /* Ajusta para que esté más cerca de la mesa */
+  width: 100%;
+}
+
+
+
+
+
+.mesa-container {
+  position: relative;
+  width: 100%; /* Ajusta el ancho según sea necesario */
+  max-width: 1400px; /* Tamaño máximo para escalabilidad */
+  margin: auto;
+}
+
+
+.player-1 {
+  top: 38%;
+  left: 15%;
+}
+
+
+
+.player-2 {
+  top: 53%;
+  left: 25%;
+}
+
+
+.player-3  {
+  top: 70%;
+  left: 40%;
+}
+
+
+.player-4 {
+  top: 53%;
+  left: 55%;
+}
+
+.player-5 {
+  top: 38%;
+  left: 65%;
+}
+
+
+.player-6 {
+  top: 25%;
+  left: 40%;
+}
