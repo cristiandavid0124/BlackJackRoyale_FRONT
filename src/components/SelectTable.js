@@ -1,5 +1,4 @@
-import { io } from 'socket.io-client';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Container, Button } from 'react-bootstrap';
 
@@ -11,21 +10,6 @@ const SelectTable = () => {
     const { id, name } = location.state || {};
 
     const [selectedTable, setSelectedTable] = useState(null); // Guarda el número de mesa seleccionada
-    const [socket, setSocket] = useState(null);
-
-    // Conectar al servidor Socket.IO al cargar el componente
-    useEffect(() => {
-        const newSocket = io('http://localhost:8080', {
-            query: {
-                name: name // Enviar el nombre del jugador como parte de la consulta
-            }
-        });
-        setSocket(newSocket);
-
-        return () => {
-            if (newSocket) newSocket.disconnect();
-        };
-    }, [name]);
 
     // Función para manejar la selección de mesa
     const handleSelectTable = (tableNumber) => {
@@ -35,16 +19,13 @@ const SelectTable = () => {
 
     // Función para navegar a la vista de la mesa seleccionada
     const handleGoToTable = () => {
-        if (selectedTable && socket) {
-            socket.emit('joinRoom', selectedTable.toString(), () => {
-                console.log(`Unido a la sala ${selectedTable}`);
-                navigate('/BlackJackRoyale/Game', {
-                    state: {
-                        id,
-                        name,
-                        roomId: selectedTable, // Envía la mesa seleccionada como roomId
-                    },
-                });
+        if (selectedTable) {
+            navigate('/BlackJackRoyale/Game', {
+                state: {
+                    id,
+                    name,
+                    roomId: selectedTable, // Envía la mesa seleccionada como roomId
+                },
             });
         }
     };
