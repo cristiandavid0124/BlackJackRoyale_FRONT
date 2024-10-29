@@ -69,6 +69,7 @@ export const IdTokenData = (props) => {
     const handleSaveNickname = async () => {
         if (nickname.length < 3) {
             setNicknameError("El Nickname debe tener al menos 3 caracteres");
+          
             return;
         }
         setNicknameSaved(true);
