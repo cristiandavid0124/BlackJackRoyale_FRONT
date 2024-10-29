@@ -35,7 +35,7 @@ const BlackjackTable = () => {
 
   useEffect(() => {
     // Inicializa el socket al cargar el componente BlackjackTable
-    const newSocket = io('http://localhost:8080', {
+    const newSocket = io('http://localhost:9092', {
       query: {
         name: name,
         id: id, // Enviar el nombre y el id del jugador como parte de la consulta
