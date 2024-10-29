@@ -35,9 +35,15 @@ export const IdTokenData = (props) => {
                     try {
                         console.log('Enviando petición POST a http://localhost:8080/users');
                         const postResponse = await axios.post('http://localhost:8080/users', {
-                            id: preferred_username,
+                            email: preferred_username,
                             name: name
+                        }, {
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
                         });
+                        
+    
                         console.log('Respuesta de POST:', postResponse.data);
                         setNicknameSaved(true);
                     } catch (postError) {
@@ -51,6 +57,7 @@ export const IdTokenData = (props) => {
         
         checkOrCreateUser();
     }, [preferred_username, name]);
+    
 
     const handleNicknameChange = (e) => {
         const value = e.target.value;
