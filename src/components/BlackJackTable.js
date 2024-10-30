@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'; 
+import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import './css/BlackJackTable.css';
@@ -9,21 +9,60 @@ import roja from './img/roja.png';
 import negra from './img/negra.png';
 import mesa from './img/mesa.png';
 import logo from './img/logo.PNG';
-import Bitmap1 from './img/Bitmap1.png';
-import Bitmap39 from './img/Bitmap39.png';
+import Bitmap53 from './img/Bitmap57.png'; // Carta por defecto
+
+// Función para obtener la imagen de bitmap correspondiente a la carta
+const getBitmapImage = (suit, rank) => {
+  const suitToBitmapStartIndex = {
+    Clubs: 1,
+    Diamonds: 14,
+    Hearts: 27,
+    Spades: 40,
+  };
+
+  const rankToIndex = {
+    Ace: 1,
+    2: 2,
+    3: 3,
+    4: 4,
+    5: 5,
+    6: 6,
+    7: 7,
+    8: 8,
+    9: 9,
+    10: 10,
+    Jack: 11,
+    Queen: 12,
+    King: 13,
+  };
+
+  const baseIndex = suitToBitmapStartIndex[suit];
+  const rankIndex = rankToIndex[rank];
+  if (!baseIndex || !rankIndex) {
+    console.warn(`Datos inválidos para la carta: suit=${suit}, rank=${rank}`);
+    return Bitmap53;
+  }
+
+  const bitmapIndex = baseIndex + rankIndex - 1;
+  try {
+    return require(`./img/Bitmap${bitmapIndex}.png`);
+  } catch (error) {
+    console.error(`No se encontró Bitmap${bitmapIndex}.png: `, error);
+    return Bitmap53;
+  }
+};
 
 const BlackjackTable = () => {
   const location = useLocation();
   const { id, name, roomId } = location.state || {};
-
-  const [saldo, setSaldo] = useState(null);  // Estado inicial sin valor predeterminado
+  const [saldo, setSaldo] = useState(null);
   const [apuestaActual, setApuestaActual] = useState(null);
   const [ultimoPremio, setUltimoPremio] = useState(null);
   const [socket, setSocket] = useState(null);
   const [gameState, setGameState] = useState(null);
   const [fichasSeleccionadas, setFichasSeleccionadas] = useState([]);
   const [playerInfo, setPlayerInfo] = useState({});
-  const [userCards, setUserCards] = useState([Bitmap1, Bitmap39]);
+  const [userCards, setUserCards] = useState([Bitmap53, Bitmap53]);
 
   const valoresFichas = {
     AZUL: 1,
@@ -34,9 +73,7 @@ const BlackjackTable = () => {
   };
 
   useEffect(() => {
-    const newSocket = io('http://localhost:9092', {
-      query: { name, id },
-    });
+    const newSocket = io('http://localhost:9092', { query: { name, id } });
     setSocket(newSocket);
 
     newSocket.emit('joinRoom', roomId.toString(), () => {
@@ -47,16 +84,12 @@ const BlackjackTable = () => {
       setGameState(data);
       actualizarEstadoJuego(data);
 
-      const playerData = data.players.find(player => {
-        console.log(`Comparando player.name: "${player.nickName}" con name: "${name}"`);
-        return player.nickName === name;
-      });
-
+      const playerData = data.players.find((player) => player.nickName === name);
       if (playerData) {
-        console.log("Jugador encontrado:", playerData);
-        setSaldo(playerData.amount);  // Ahora usa amount como saldo
+        setSaldo(playerData.amount);
         setApuestaActual(playerData.bet);
-        setUltimoPremio(playerData.lastPrize || ultimoPremio); // Último premio si existe
+        setUserCards(playerData.hand.map((card) => getBitmapImage(card.suit, card.rank))); // Actualizar `userCards` con la mano del jugador
+        setUltimoPremio(playerData.lastPrize || ultimoPremio);
       } else {
         console.warn(`No se encontró al jugador con nombre "${name}".`);
       }
@@ -72,12 +105,9 @@ const BlackjackTable = () => {
   }, [name, id, roomId]);
 
   const actualizarEstadoJuego = (gameState) => {
-    console.log("Estado del juego recibido:", gameState);
-
     if (gameState && gameState.players) {
       const updatedPlayerInfo = {};
       gameState.players.forEach((player, index) => {
-        console.log("Información del jugador:", player);
         updatedPlayerInfo[index + 1] = {
           name: player.nickName || 'Cargando...',
           bet: player.bet || 0,
@@ -88,7 +118,6 @@ const BlackjackTable = () => {
 
       updatedPlayerInfo[6] = { hand: gameState.dealerHand || [] }; // Dealer en posición 6
       setPlayerInfo(updatedPlayerInfo);
-      console.log("Información de los jugadores actualizada:", updatedPlayerInfo);
     } else {
       console.warn("gameState o gameState.players no disponible o vacío");
     }
@@ -107,23 +136,12 @@ const BlackjackTable = () => {
   const apostar = () => {
     if (socket && roomId) {
       const fichasNormalizadas = fichasSeleccionadas.map((color) => color.toUpperCase());
-
-      console.log("Fichas seleccionadas antes de apostar:", fichasNormalizadas);
-
-      socket.emit('playerBet', { fichas: fichasNormalizadas, roomId }, () => {
-        console.log("Apuesta enviada:", fichasNormalizadas);
-      });
+      socket.emit('playerBet', { fichas: fichasNormalizadas, roomId });
+      setFichasSeleccionadas([]);
+      setUltimoPremio(apuestaActual);
+      setApuestaActual(0);
     }
-    setFichasSeleccionadas([]);
-    setUltimoPremio(apuestaActual);
-    setApuestaActual(0);
   };
-
-  const renderHand = (hand) => hand.map((card, index) => (
-    <div key={index} className="player-card">
-      {card.value} of {card.suit}
-    </div>
-  ));
 
   const renderChips = (chips) => chips.map((chip, index) => {
     const chipImages = { 
@@ -189,7 +207,10 @@ const BlackjackTable = () => {
                     </div>
 
                     <div className="player-cards">
-                      {renderHand(playerInfo[player]?.hand || [])}
+                      {playerInfo[player].hand.map((card, index) => {
+                        const cardImage = getBitmapImage(card.suit, card.rank);
+                        return <img key={index} src={cardImage} alt={`${card.rank} of ${card.suit}`} className="player-card" />;
+                      })}
                     </div>
                     
                     <div className="player-info">
