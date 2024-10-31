@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { Button, Container } from 'react-bootstrap';
 import { useNavigate, useLocation } from 'react-router-dom';
-import './css/SelectTable.css';
+import { Container, Button } from 'react-bootstrap';
 
 const SelectTable = () => {
     const navigate = useNavigate();
@@ -29,6 +28,9 @@ const SelectTable = () => {
                 },
             });
         }
+
+        console.log(id)
+        console.log(name)
     };
 
     // Función para regresar a la pantalla anterior
