@@ -26,7 +26,7 @@ const Login = () => {
                 <Container className="login-content">
                     <h1 className="casino-title">Bienvenido a Blackjack</h1>
                     <Button className="signInButton" onClick={handleRedirect} variant="dark">
-                        Únete a la Mesa
+                        Sign in
                     </Button>
                 </Container>
             </div>

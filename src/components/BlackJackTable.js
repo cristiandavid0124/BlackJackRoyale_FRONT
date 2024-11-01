@@ -52,6 +52,7 @@ const getBitmapImage = (suit, rank) => {
   }
 };
 
+
 const BlackjackTable = () => {
   const location = useLocation();
   const { id, name, roomId } = location.state || {};
@@ -63,46 +64,53 @@ const BlackjackTable = () => {
   const [fichasSeleccionadas, setFichasSeleccionadas] = useState([]);
   const [playerInfo, setPlayerInfo] = useState({});
   const [userCards, setUserCards] = useState([Bitmap53, Bitmap53]);
+  const [isTurn, setIsTurn] = useState(false);
 
   const valoresFichas = {
-    AZUL: 1,
-    AMARILLO: 5,
-    VERDE: 10,
-    ROJO: 25,
-    NEGRO: 50,
+    AZUL: 5,
+    AMARILLO: 1,
+    VERDE: 25,
+    ROJO: 10,
+    NEGRO: 100,
   };
 
   useEffect(() => {
     const newSocket = io('http://localhost:9092', { query: { name, id } });
     setSocket(newSocket);
-
+  
     newSocket.emit('joinRoom', roomId.toString(), () => {
       console.log(`Unido a la sala ${roomId}`);
     });
-
+  
     newSocket.on('roomUpdate', (data) => {
       setGameState(data);
       actualizarEstadoJuego(data);
-
+  
       const playerData = data.players.find((player) => player.nickName === name);
       if (playerData) {
         setSaldo(playerData.amount);
         setApuestaActual(playerData.bet);
-        setUserCards(playerData.hand.map((card) => getBitmapImage(card.suit, card.rank))); // Actualizar `userCards` con la mano del jugador
+        setUserCards(playerData.hand.map((card) => getBitmapImage(card.suit, card.rank)));
         setUltimoPremio(playerData.lastPrize || ultimoPremio);
+  
+        // Muestra la alerta si el jugador está en turno
+        if (playerData.inTurn) {
+          window.alert("¡Es tu turno!");
+        }
       } else {
         console.warn(`No se encontró al jugador con nombre "${name}".`);
       }
-
+  
       if (data.winners.length) {
         alert(`Ganadores: ${data.winners.join(", ")}`);
       }
     });
-
+  
     return () => {
       if (newSocket) newSocket.disconnect();
     };
   }, [name, id, roomId]);
+  
 
   const actualizarEstadoJuego = (gameState) => {
     if (gameState && gameState.players) {
@@ -123,6 +131,8 @@ const BlackjackTable = () => {
     }
   };
 
+  
+
   const seleccionarFicha = (color, valor) => {
     if (saldo < valor) {
       alert('Saldo insuficiente para esta ficha');
@@ -142,6 +152,14 @@ const BlackjackTable = () => {
       setApuestaActual(0);
     }
   };
+
+  const playerAction = (actionType) => {
+    if (socket && roomId) {
+      socket.emit('playerAction', { type: actionType, roomId });
+    }
+  };
+
+
 
   const renderChips = (chips) => chips.map((chip, index) => {
     const chipImages = { 
@@ -175,14 +193,21 @@ const BlackjackTable = () => {
 
       <div className="main-container">
         <div className="left-column">
+     
           <div className="card-slots">
             {userCards.map((card, index) => (
               <img key={index} src={card} alt={`Carta ${index + 1}`} className="card-slot" />
             ))}
           </div>
-          <button className="boton-robar" onClick={() => socket.emit('playerAction', { type: 'hit', roomId })}>
-            Robar
-          </button>
+
+          <div className="button-row">
+          <button className="boton-doblar" onClick={() => playerAction('double')}>DOUBLE</button>
+            <button className="boton-robar" onClick={() => playerAction('hit')}>HIT</button>
+            <button className="boton-quedarse" onClick={() => playerAction('stand')}>STAND</button>
+          </div>
+         
+       
+
           <div className="fichas">
             <img src={azul} alt="Ficha azul" className="ficha" onClick={() => seleccionarFicha('AZUL', valoresFichas.AZUL)} />
             <img src={amarillo} alt="Ficha amarilla" className="ficha" onClick={() => seleccionarFicha('AMARILLO', valoresFichas.AMARILLO)} />
@@ -192,6 +217,8 @@ const BlackjackTable = () => {
           </div>
           <button className="boton-apostar" onClick={apostar}>Apostar</button>
         </div>
+
+ 
 
         <div className="right-column">
           <div className="mesa-container">
