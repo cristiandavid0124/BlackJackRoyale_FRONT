@@ -12,29 +12,22 @@ export const IdTokenData = (props) => {
     const navigate = useNavigate();
 
     const [nickname, setNickname] = useState("Player123"); 
-    const [nicknameSaved, setNicknameSaved] = useState(false); // Estado para verificar si el nickname está guardado
-    const [errorMessage, setErrorMessage] = useState(""); // Mensaje de error si el nickname no está guardado
-    const [nicknameError, setNicknameError] = useState(""); // Mensaje de error si el nickname no es válido
+    const [nicknameSaved, setNicknameSaved] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
+    const [nicknameError, setNicknameError] = useState("");
 
-    // Verificar si el usuario existe y crearlo si no
     useEffect(() => {
         const checkOrCreateUser = async () => {
             try {
-                console.log(`Enviando petición GET a http://localhost:8080/users/${preferred_username}`);
                 const response = await axios.get(`http://localhost:8080/users/${preferred_username}`);
-                console.log('Respuesta de GET:', response);
-        
                 if (response.status === 200) {
-                    console.log('Usuario encontrado:', response.data);
-                    setNickname(response.data.nickName || ""); // Establecer el nickname existente o vacío si no está
-                    setNicknameSaved(!!response.data.nickName); // Marcar como guardado si el nickname existe
+                    setNickname(response.data.nickName || "");
+                    setNicknameSaved(!!response.data.nickName);
                 }
             } catch (error) {
                 if (error.response && error.response.status === 404) {
-                    console.log('Usuario no encontrado, creando nuevo usuario...');
                     try {
-                        console.log('Enviando petición POST a http://localhost:8080/users');
-                        const postResponse = await axios.post('http://localhost:8080/users', {
+                        await axios.post('http://localhost:8080/users', {
                             email: preferred_username,
                             name: name
                         }, {
@@ -42,9 +35,7 @@ export const IdTokenData = (props) => {
                                 'Content-Type': 'application/json'
                             }
                         });
-                        
-                        console.log('Respuesta de POST:', postResponse.data);
-                        setNicknameSaved(false); // El nickname no está guardado inicialmente
+                        setNicknameSaved(false);
                     } catch (postError) {
                         console.error('Error al crear el usuario:', postError);
                     }
@@ -60,9 +51,8 @@ export const IdTokenData = (props) => {
     const handleNicknameChange = (e) => {
         const value = e.target.value;
         setNickname(value);
-        setNicknameSaved(false); // Cambiar el estado de guardado si el usuario edita el nickname
+        setNicknameSaved(false);
 
-        // Validar si el nickname es válido
         if (value.length < 3) {
             setNicknameError("El Nickname debe tener al menos 3 caracteres");
         } else {
@@ -70,7 +60,6 @@ export const IdTokenData = (props) => {
         }
     };
 
-    // Guardar el nickname cuando se hace clic en el botón "Save"
     const handleSaveNickname = async () => {
         if (nickname.length < 3) {
             setNicknameError("El Nickname debe tener al menos 3 caracteres");
@@ -78,27 +67,23 @@ export const IdTokenData = (props) => {
         }
 
         try {
-            console.log(`Enviando petición PUT para actualizar nickname a http://localhost:8080/users/${preferred_username}`);
-            const putResponse = await axios.put(`http://localhost:8080/users/${preferred_username}`, {
+            await axios.put(`http://localhost:8080/users/${preferred_username}`, {
                 nickName: nickname
             }, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
-            console.log('Respuesta de PUT:', putResponse.data);
             setNicknameSaved(true);
         } catch (putError) {
             console.error('Error al actualizar el nickname:', putError);
         }
     };
 
-    // Manejar el clic en el botón "Jugar"
     const handlePlayClick = () => {
         if (!nicknameSaved) {
             setErrorMessage("Tienes que crear tu NickName antes de jugar");
         } else {
-            // Enviar solo id y name
             navigate('/BlackJackRoyale/SelectTable', {
                 state: {
                     id: preferred_username,
@@ -110,7 +95,6 @@ export const IdTokenData = (props) => {
     
     return (
         <>
-            {/* Barra de Navegación */}
             <header className="table-header">
                 <div className="header-logo">
                     <img src={logo} alt="Logo" className="logo-header" />
@@ -120,51 +104,34 @@ export const IdTokenData = (props) => {
                 </div>
             </header>
 
-            {/* Tarjeta de perfil del usuario */}
             <div className="user-info-container">
                 <div className="user-card">
-                    <h2>👤 Player Profile</h2>
+                    <h2>👤 Choose Your Nickname</h2>
                     <div className="user-details">
                         <p><strong>Name:</strong> {name}</p>
                         <p><strong>Email:</strong> {preferred_username}</p>
-                        
-                        {/* Campo de entrada para el Nickname */}
                         <p>
-                            <strong>Nickname:</strong>
+                            <strong>Nick:</strong>
                             <input
                                 type="text"
                                 value={nickname}
                                 onChange={handleNicknameChange}
                                 className="nickname-input"
-                                disabled={nicknameSaved} // Deshabilitar si el nickname ya está guardado
+                                disabled={nicknameSaved}
                             />
                         </p>
                         {nicknameError && <p className="error-message">{nicknameError}</p>}
                         {!nicknameSaved && (
-                            <Button 
-                                onClick={handleSaveNickname} 
-                                variant="primary" 
-                                className="save-button"
-                                disabled={nickname.length < 3} // Deshabilitar si el nickname no es válido
-                            >
+                            <button onClick={handleSaveNickname} className="save-button" disabled={nickname.length < 3}>
                                 Save
-                            </Button>
+                            </button>
                         )}
                     </div>
                 </div>
-
-                {/* Mostrar mensaje de error si el nickname no está guardado */}
                 {errorMessage && <p className="error-message">{errorMessage}</p>}
-
-                {/* Botón "Jugar" redirige a /BlackJackRoyale/SelectTable */}
-                <Button 
-                    onClick={handlePlayClick} 
-                    variant="warning" 
-                    className="play-button" 
-                    disabled={!nicknameSaved} // Deshabilitado si no hay nickname guardado
-                >
+                <button onClick={handlePlayClick} className="play-button" disabled={!nicknameSaved}>
                     Jugar
-                </Button>
+                </button>
             </div>
         </>
     );

@@ -1,11 +1,10 @@
-// ./components/Login.js
-
 import React from 'react';
 import { useMsal } from '@azure/msal-react';
-import { Button, Container } from 'react-bootstrap';
+import { Container } from 'react-bootstrap'; // Elimina la importación de Button
 import { loginRequest } from '../authConfig';
 import './css/Login.css'; // Archivo CSS para estilos personalizados
-import logo from './img/logoo.png'; // Asegúrate de que el logo esté en la carpeta assets
+import logo from './img/logo.PNG'; // Logo pequeño
+import fondo from './img/login_fondo.png'; // Imagen de fondo grande
 
 const Login = () => {
     const { instance } = useMsal();
@@ -21,13 +20,24 @@ const Login = () => {
 
     return (
         <div className="login-container">
-            <img src={logo} alt="Casino Logo" className="casino-logo" />
-            <div className="login-box">
-                <Container className="login-content">
-                    <h1 className="casino-title">Bienvenido a Blackjack</h1>
-                    <Button className="signInButton" onClick={handleRedirect} variant="dark">
-                        Sign in
-                    </Button>
+            {/* Contenedor de la imagen de fondo (mitad izquierda) */}
+            <div className="login-background">
+                <img src={fondo} alt="Login Background" className="background-image" />
+            </div>
+            
+            {/* Contenedor del contenido de login (mitad derecha) */}
+            <div className="login-content">
+                <Container className="login-box">
+                    <img src={logo} alt="Casino Logo" className="casino-logo" />
+                    
+                    {/* Nuevo contenedor para el botón */}
+                    <div className="signInButton-container">
+                        <button className="signInButton" onClick={handleRedirect}>
+                            Sign in
+                        </button>
+                    </div>
+
+                    <p className="register-text">¿No tienes una cuenta? <a href="/register">Regístrate</a></p>
                 </Container>
             </div>
         </div>

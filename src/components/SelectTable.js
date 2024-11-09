@@ -1,72 +1,94 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Container, Button } from 'react-bootstrap';
+import logo from './img/logo1.PNG';
+import './css/SelectTable.css';
 
 const SelectTable = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    // Obtén los datos de id y name desde el componente anterior
     const { id, name } = location.state || {};
 
-    const [selectedTable, setSelectedTable] = useState(null); // Guarda el número de mesa seleccionada
+    const [selectedTable, setSelectedTable] = useState(null);
+    const [activeButton, setActiveButton] = useState('Información del Juego');
 
-    // Función para manejar la selección de mesa
     const handleSelectTable = (tableNumber) => {
         console.log(`Mesa ${tableNumber} seleccionada`);
-        setSelectedTable(tableNumber); // Guarda el número de mesa como roomId
+        setSelectedTable(tableNumber);
     };
 
-    // Función para navegar a la vista de la mesa seleccionada
     const handleGoToTable = () => {
         if (selectedTable) {
             navigate('/BlackJackRoyale/Game', {
                 state: {
                     id,
                     name,
-                    roomId: selectedTable, // Envía la mesa seleccionada como roomId
+                    roomId: selectedTable,
                 },
             });
         }
-
-        console.log(id)
-        console.log(name)
     };
 
-    // Función para regresar a la pantalla anterior
+    const handleNavigation = (route) => {
+        setActiveButton(route);
+        // Redirigir si es necesario con navigate(route);
+    };
+
     const handleGoBack = () => {
         navigate('/BlackJackRoyale/UserInfo');
     };
 
     return (
-        <Container className="select-table-container">
-            <h2>Selecciona una Mesa</h2>
-            <Button onClick={handleGoBack} variant="secondary" className="back-button">
-                Volver
-            </Button>
-            <div className="table-options">
-                {[1, 2, 3, 4, 5].map((table) => (
-                    <Button
-                        key={table}
-                        variant={selectedTable === table ? "success" : "warning"} // Cambia el color si está seleccionada
-                        onClick={() => handleSelectTable(table)}
-                        className="table-button"
-                    >
-                        Mesa {table}
-                    </Button>
-                ))}
-            </div>
-
-            {/* Mostrar mensaje con la mesa seleccionada */}
-            {selectedTable && (
-                <div className="selected-table-message">
-                    <p>Mesa {selectedTable} seleccionada. ¿Listo para comenzar?</p>
-                    <Button onClick={handleGoToTable} variant="primary" className="go-to-table-button">
-                        Ir a la Mesa
-                    </Button>
+        <>
+            <header className="Options">
+                <div className="logo">
+                    <img src={logo} alt="Logo" className="logo-header" />
                 </div>
-            )}
-        </Container>
+                <nav className="menu">
+                    {['Rules', 'Games', 'History', 'Profile', 'Sign Out'].map((item) => (
+                        <button
+                            key={item}
+                            className={`btn menu-button ${activeButton === item ? 'active' : ''}`}
+                            onClick={() => handleNavigation(item)}
+                        >
+                            {item}
+                        </button>
+                    ))}
+                </nav>
+            </header>
+
+            <div className="main-content">
+                <div className="select-table-container">
+                    <h2>Selecciona una Mesa</h2>
+                    
+                    <div className="table-options">
+                        {[1, 2, 3, 4, 5].map((table) => (
+                            <button
+                                key={table}
+                                onClick={() => handleSelectTable(table)}
+                                className={`btn table-button ${selectedTable === table ? 'selected' : ''}`}
+                            >
+                                Mesa {table}
+                            </button>
+                        ))}
+                    </div>
+
+                    {selectedTable && (
+                        <div className="selected-table-message">
+                            <p>Mesa {selectedTable} seleccionada. ¿Listo para comenzar?</p>
+                            <button onClick={handleGoToTable} className="btn go-to-table-button">
+                                Ir a la Mesa
+                            </button>
+                        </div>
+                    )}
+                    
+                    {/* Botón de volver reubicado aquí debajo de las mesas */}
+                    <button onClick={handleGoBack} className="btn back-button">
+                        Volver
+                    </button>
+                </div>
+            </div>
+        </>
     );
 };
 

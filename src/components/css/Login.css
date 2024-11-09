@@ -1,71 +1,73 @@
-/* Login.css */
-
+/* Contenedor principal que divide la pantalla en dos mitades */
 .login-container {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start; /* Alineamos todo al inicio superior */
     height: 100vh;
-    background-color: #000000; /* Fondo negro puro */
-    color: #f4c542; /* Color dorado */
-    padding: 0;
-    box-sizing: border-box;
 }
 
-.casino-logo {
-    max-width: 100%; /* Asegura que la imagen se ajuste a pantallas pequeñas */
-    margin: 0;
-    padding: 0; /* Quitar cualquier espacio alrededor del logo */
+/* Mitad izquierda: imagen de fondo */
+.login-background {
+    flex: 1;
+    position: relative;
+}
+
+.background-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Mitad derecha: contenido de login */
+.login-content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #000; /* Fondo negro para la mitad derecha */
+    color: #fff; /* Texto blanco */
 }
 
 .login-box {
     text-align: center;
-    padding: 30px 20px;
-    background-color: #333333;
-    border-radius: 8px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    max-width: 400px;
-    margin-top: 20px; /* Separación mínima entre el logo y la caja */
+    width: 100%; /* Ocupa el 80% del ancho del contenedor */
+    max-width: 400px; /* Opcional: Limitar el ancho máximo */
 }
 
-.login-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.casino-logo {
+    width: 35%; /* La imagen del logo ocupa el 80% del ancho de .login-box */
+    margin-bottom: 15%; /* Margen inferior en porcentaje */
 }
 
-.casino-title {
-    font-size: 2rem;
-    font-weight: bold;
-    margin-bottom: 20px;
-}
 
-/* Animación de brillo para el botón */
-@keyframes button-glow {
-    0%, 100% {
-        box-shadow: 0 0 10px rgba(212, 175, 55, 0.8), 0 0 20px rgba(212, 175, 55, 0.6);
-    }
-    50% {
-        box-shadow: 0 0 20px rgba(212, 175, 55, 1), 0 0 30px rgba(212, 175, 55, 0.8);
-    }
-}
 
+
+/* Estilos específicos para el botón Sign in */
 .signInButton {
-    font-size: 1.2rem;
-    font-weight: bold;
-    background-color: #d4af37; /* Color dorado */
-    border: none;
-    padding: 10px 20px;
-    margin-top: 10px;
+    margin-bottom: 0%; /* Espaciado superior en porcentaje */
+    width: 50%; /* Ocupa el 100% del contenedor .signInButton-container */
+    height: 3em; /* Altura en unidades relativas para flexibilidad */
     color: #000000;
-    animation: button-glow 1.5s infinite; /* Añadir la animación */
+    background: #c5a880;
+    border-radius: 100px;
+    font-size: 1em;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    font-family: 'Now-Medium', sans-serif;
+    font-size: 19px;
+    font-weight: 700;
 }
 
-.signInButton:hover {
-    background-color: #b8860b; /* Oscurece el dorado al hacer hover */
-    animation: none; /* Detiene la animación durante el hover */
+/* Texto de registro */
+.register-text {
+    color: #c5a880;
+    font-size: 0.9em;
+    margin-top: 5%; /* Margen superior en porcentaje */
+    font-family: 'Now-Medium', sans-serif;
 }
+
+.register-text a {
+    color: #c5a880;
+    text-decoration: underline;
+}
+
+

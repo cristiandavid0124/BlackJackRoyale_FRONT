@@ -1,60 +1,176 @@
-/* SelectTable.css */
-.select-table-container {
-    text-align: center;
-    padding: 40px;
-    background-color: #333;
-    color: #ffeb3b;
-    min-height: 100vh;
-}
-
-.table-options {
-    display: flex;
-    justify-content: space-around;
-    margin-top: 20px;
-}
-
-.table-button {
-    width: 120px;
-    height: 60px;
-    font-size: 1.2em;
-}
-
-.back-button {
-    margin-top: 20px;
-    margin-bottom: 20px;
-    background-color: #888;
-    color: #fff;
-    border: none;
-}
-
-.back-button:hover {
-    background-color: #666;
-}
-
-.selected-table-message {
-    margin-top: 20px;
-    color: #fff;
-    font-size: 1.2em;
-}
-
-.go-to-table-button {
-    margin-top: 10px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    font-size: 1em;
-    padding: 10px 20px;
-}
-
-.go-to-table-button:hover {
-    background-color: #0056b3;
-}
-
-body, html {
-    background-color: #333; /* Fondo oscuro para toda la pantalla */
-    color: #ffeb3b; /* Texto en amarillo para todo el contenido por defecto */
+/* Estilos generales */
+body {
+    background-color: #000000;
+    color: #c5a880;
     margin: 0;
     padding: 0;
     min-height: 100vh;
 }
 
+html {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+}
+
+/* Estilos para el header */
+header.Options {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #000000;
+    padding: 10px 20px;
+    border-bottom: 2px solid #333;
+}
+
+.logo .logo-header {
+    height: 80px;
+    margin-right: 20px;
+}
+
+.menu {
+    display: flex;
+    gap: 20px;
+}
+
+.btn.menu-button {
+    flex: 1;
+    border: none;
+    padding: 10px 15px;
+    font-size: 18px;
+    text-align: center;
+    background-color: transparent;
+    color: #ccc;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    font-family: 'Now-Medium', sans-serif;
+    position: relative;
+}
+
+.btn.menu-button:hover {
+    color: #c5a880;
+}
+
+.btn.menu-button.active {
+    color: #fff;
+}
+
+.btn.menu-button.active::after,
+.btn.menu-button:hover::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -5px;
+    width: 100%;
+    height: 2px;
+    background-color: #c5a880;
+    transition: width 0.3s ease;
+}
+
+.btn.menu-button::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -5px;
+    width: 0;
+    height: 2px;
+    background-color: #c5a880;
+    transition: width 0.3s ease;
+}
+
+/* Contenedor principal */
+.main-content {
+    background: url('../img/fondo3.webp') no-repeat center center fixed;
+    background-size: cover;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.select-table-container {
+    width: 90%;
+    max-width: 1200px;
+    min-height: 100vh;
+    background-color: #333333;
+    color: #c5a880;
+    padding: 100px 40px;
+    text-align: center;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    margin: 0 auto;
+    border-radius: 10px;
+}
+
+/* Estilos para las opciones de mesa */
+.select-table-container .table-options {
+    display: flex;
+    flex-direction: column; /* Coloca los botones en una columna */
+    align-items: stretch;   /* Permite que los botones se estiren al 100% del ancho */
+    width: 100%;            /* Asegura que el contenedor de opciones ocupe todo el ancho */
+    margin-top: 20px;
+}
+/* Estilos para los botones de mesa */
+.btn.table-button {
+    width: 100%;           /* Ocupa todo el ancho del contenedor */
+    max-width: none;        /* Elimina cualquier límite de ancho si existe */
+    height: 60px;
+    font-size: 1.2em;
+    background-color: #444;
+    color: #c5a880;
+    border: 2px solid #c5a880;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    margin-bottom: 15px;    /* Espacio entre los botones */
+    box-sizing: border-box; /* Asegura que el borde se incluya en el ancho */
+}
+.btn.table-button:hover {
+    background-color: #c5a880;
+    color: #333333;
+}
+
+.btn.table-button.selected {
+    background-color: #c5a880;
+    color: #333333;
+}
+
+/* Estilos para el botón de volver */
+.btn.back-button {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    background-color: transparent;
+    color: #c5a880;
+    border: 2px solid #c5a880;
+    padding: 10px 20px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn.back-button:hover {
+    background-color: #c5a880;
+    color: #333333;
+}
+
+/* Mensaje de mesa seleccionada */
+.select-table-container .selected-table-message {
+    margin-top: 20px;
+    color: #fff;
+    font-size: 1.2em;
+}
+
+/* Botón para ir a la mesa */
+.btn.go-to-table-button {
+    margin-top: 10px;
+    background-color: transparent;
+    color: #c5a880;
+    border: 2px solid #c5a880;
+    padding: 10px 20px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn.go-to-table-button:hover {
+    background-color: #c5a880;
+    color: #333333;
+}
