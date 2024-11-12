@@ -10,6 +10,8 @@ import negra from './img/negra.png';
 import mesa from './img/mesa.png';
 import logo from './img/logo.PNG';
 import Bitmap53 from './img/Bitmap57.png'; // Carta por defecto
+import luigiCasino from './img/luigicasino.gif';
+
 
 // Función para obtener la imagen de bitmap correspondiente a la carta
 const getBitmapImage = (suit, rank) => {
@@ -222,7 +224,7 @@ const BlackjackTable = () => {
 
         <div className="right-column">
           <div className="mesa-container">
-            <p className="mesa-text">Dealer</p>
+          <img src={luigiCasino} alt="Dealer GIF" className="luigi-gif" />
             <img src={mesa} alt="mesa" className="mesa" />
 
             {[1, 2, 3, 4, 5, 6].map((player) => (

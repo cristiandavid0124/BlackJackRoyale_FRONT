@@ -10,7 +10,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.2rem 0.5rem;
+  padding: 0.005rem 1.0rem;
   background-color: black;
   color: white;
   width: 100vw;
@@ -182,16 +182,13 @@ font-weight: 700;
   font-family: Georgia, serif;
   font-size: 1.5rem; /* Reduce el tamaño de la fuente */
   color: white;
-  text-align: center;
+  left: 41%;
   margin: 0.5rem 0; /* Reduce el margen superior e inferior */
   padding: 0.2rem 0.5rem; /* Reduce el padding alrededor */
   position: absolute;
-  top: -2%; /* Ajusta para que esté más cerca de la mesa */
+  top: 1%; /* Ajusta para que esté más cerca de la mesa */
   width: 100%;
 }
-
-
-
 
 .mesa-container {
   position: relative;
@@ -200,6 +197,14 @@ font-weight: 700;
   margin: auto;
 }
 
+.luigi-gif {
+  position: absolute;
+  top: -50px; /* Ajusta este valor para que el GIF quede sobre la mesa */
+  left: 44%;
+  transform: translateX(-50%); /* Centra el GIF horizontalmente */
+  width: 137px; /* Ajusta el tamaño según prefieras */
+  height: auto; /* Mantiene la proporción del GIF */
+}
 
 .player-1 {
   top: 38%;
