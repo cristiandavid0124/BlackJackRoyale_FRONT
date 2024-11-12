@@ -243,7 +243,7 @@ const BlackjackTable = () => {
                     </div>
                     
                     <div className="player-info">
-                      <p>Nombre: {playerInfo[player]?.name || (player === 6 ? 'Dealer' : 'Esperando...')}</p>
+                      <p>Nombre: {playerInfo[player]?.name || (player === 6 ? 'Luigi' : 'Esperando...')}</p>
                       {player !== 6 && <p>Apuesta: ${playerInfo[player]?.bet || ''}</p>}
                     </div>
                   </>
