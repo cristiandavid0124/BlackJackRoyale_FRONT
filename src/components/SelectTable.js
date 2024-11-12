@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import BotonAuth from './BotonAuth'; // Importa BotonAuth
 import logo from './img/logo1.PNG';
 import './css/SelectTable.css';
 
@@ -31,7 +32,9 @@ const SelectTable = () => {
 
     const handleNavigation = (route) => {
         setActiveButton(route);
-        // Redirigir si es necesario con navigate(route);
+        if (route === 'Rules') {
+            navigate('/BlackJackRoyale/Rules');
+        }
     };
 
     const handleGoBack = () => {
@@ -45,7 +48,7 @@ const SelectTable = () => {
                     <img src={logo} alt="Logo" className="logo-header" />
                 </div>
                 <nav className="menu">
-                    {['Rules', 'Games', 'History', 'Profile', 'Sign Out'].map((item) => (
+                    {['Rules', 'Games', 'History', 'Profile'].map((item) => (
                         <button
                             key={item}
                             className={`btn menu-button ${activeButton === item ? 'active' : ''}`}
@@ -54,6 +57,7 @@ const SelectTable = () => {
                             {item}
                         </button>
                     ))}
+                    <BotonAuth /> {/* Agrega BotonAuth aquí */}
                 </nav>
             </header>
 
@@ -93,3 +97,5 @@ const SelectTable = () => {
 };
 
 export default SelectTable;
+
+

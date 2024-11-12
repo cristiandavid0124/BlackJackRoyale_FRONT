@@ -1,0 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=Gloria+Hallelujah&display=swap'); /* Importa una fuente estilo tiza */
+
+.rules-container {
+    background-color: #f0f8ff;
+    background-image: url('../img/pizarrón.png');
+    background-size: cover;
+    background-position: center;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    color: #ffffff; /* Texto en blanco */
+    font-family: 'Gloria Hallelujah', 'Chalkduster', sans-serif; /* Aplica una fuente estilo tiza */
+    font-size: 1.2em; /* Tamaño de fuente ajustado para mejor legibilidad */
+}
+
+.rules-container h1,
+.rules-container h2,
+.rules-container p,
+.rules-container li {
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+.back-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 1em;
+    color: #ffffff; /* Color del texto */
+    background-color: transparent; /* Fondo invisible */
+    border: 2px solid #ffffff; /* Borde visible */
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    transition: color 0.3s ease, border-color 0.3s ease, transform 0.3s ease; /* Transición suave */
+}
+
+/* Contenedor que centra el botón */
+.button-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+/* Efecto hover "invisible" */
+.back-button:hover {
+    color: #ffffff; /* Cambia el color del texto al pasar el ratón */
+    border-color: #ffffff; /* Cambia el color del borde */
+    transform: scale(1.05); /* Aumenta ligeramente el tamaño */
+}
+
+

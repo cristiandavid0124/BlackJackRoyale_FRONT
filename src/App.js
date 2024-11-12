@@ -7,6 +7,7 @@ import BlackJackTable from "./components/BlackJackTable";
 import SelectTable from './components/SelectTable'; // Importar el nuevo componente
 import Login from './components/Login';
 import ProtectedRoute from './components/ProtectedRoute';
+import Rules from './components/Rules'; // Importar el componente Rules
 
 const MainContent = () => {
     const { instance } = useMsal();
@@ -62,6 +63,17 @@ const MainContent = () => {
                   </ProtectedRoute>
                 }
               />
+
+                {/* Ruta protegida para las reglas */}
+                <Route
+                    path="/BlackJackRoyale/Rules"
+                    element={
+                        <ProtectedRoute>
+                            <Rules />
+                        </ProtectedRoute>
+                    }
+                />              
+
             </Routes>
           </Router>
         </div>
