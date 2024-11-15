@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+
 import { io } from 'socket.io-client';
 import './css/BlackJackTable.css';
 import azul from './img/azul.png';
@@ -11,6 +12,7 @@ import mesa from './img/mesa.png';
 import logo from './img/logo.PNG';
 import Bitmap53 from './img/Bitmap57.png'; // Carta por defecto
 import luigiCasino from './img/luigicasino.gif';
+import signout from './img/previous.png';
 
 
 // Función para obtener la imagen de bitmap correspondiente a la carta
@@ -67,6 +69,8 @@ const BlackjackTable = () => {
   const [playerInfo, setPlayerInfo] = useState({});
   const [userCards, setUserCards] = useState([Bitmap53, Bitmap53]);
   const [isTurn, setIsTurn] = useState(false);
+  const navigate = useNavigate();
+
 
   const valoresFichas = {
     AZUL: 5,
@@ -74,6 +78,14 @@ const BlackjackTable = () => {
     VERDE: 25,
     ROJO: 10,
     NEGRO: 100,
+  };
+
+
+  const handleSignOut = () => {
+    setSaldo(null);
+    setApuestaActual(null);
+    setUltimoPremio(null);
+    navigate('/BlackJackRoyale/SelectTable'); // Redirige a SelectTable
   };
 
   useEffect(() => {
@@ -188,7 +200,9 @@ const BlackjackTable = () => {
             <p>Apuesta : {apuestaActual !== null ? apuestaActual : 'Cargando...'}</p>
           </div>
           <div className="header-info-right">
-            <p>Último premio: {ultimoPremio !== null ? ultimoPremio : 'Cargando...'}</p>
+            <button className="sign-out-button" onClick={handleSignOut}>
+              <img src={signout} alt="Sign Out" className="sign-out-icon" />
+            </button>
           </div>
         </div>
       </header>

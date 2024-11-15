@@ -64,6 +64,16 @@ const MainContent = () => {
                 }
               />
 
+<Route
+            path="/BlackJackRoyale/SelectTable"
+            element={
+              <ProtectedRoute>
+                <SelectTable />
+              </ProtectedRoute>
+            }
+          />
+
+
                 {/* Ruta protegida para las reglas */}
                 <Route
                     path="/BlackJackRoyale/Rules"
