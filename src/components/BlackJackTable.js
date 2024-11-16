@@ -26,15 +26,15 @@ const getBitmapImage = (suit, rank) => {
 
   const rankToIndex = {
     Ace: 1,
-    2: 2,
-    3: 3,
-    4: 4,
-    5: 5,
-    6: 6,
-    7: 7,
-    8: 8,
-    9: 9,
-    10: 10,
+    '2': 2,
+    '3': 3,
+    '4': 4,
+    '5': 5,
+    '6': 6,
+    '7': 7,
+    '8': 8,
+    '9': 9,
+    '10': 10,
     Jack: 11,
     Queen: 12,
     King: 13,
@@ -69,11 +69,7 @@ const BlackjackTable = () => {
   const [playerInfo, setPlayerInfo] = useState({});
   const [userCards, setUserCards] = useState([Bitmap53, Bitmap53]);
   const [isGameFinished, setIsGameFinished] = useState(false);
-  const [playersDecision, setPlayersDecision] = useState({});
-  const [timer, setTimer] = useState(null);
-  const gameStateRef = useRef(null); 
-  const playersDecisionRef = useRef({});
-
+  const [showDecisionPrompt, setShowDecisionPrompt] = useState(false);
 
   const socketRef = useRef(null);
 
@@ -95,45 +91,55 @@ const BlackjackTable = () => {
   useEffect(() => {
     const newSocket = io('http://localhost:9092', { query: { name, id } });
     socketRef.current = newSocket;
-  
+
     newSocket.emit('joinRoom', roomId.toString(), () => {
       toast.success(`Unido a la sala ${roomId}`);
     });
-  
     const handleRoomUpdate = (data) => {
       console.log(`[${name}] Recibido 'roomUpdate' con data:`, data);
       setGameState(data);
-      gameStateRef.current = data;
+    
       actualizarEstadoJuego(data);
-  
+    
       const playerData = data.players.find((player) => player.nickName === name);
       if (playerData) {
         setSaldo(playerData.amount);
         setApuestaActual(playerData.bet);
         setUserCards(playerData.hand.map((card) => getBitmapImage(card.suit, card.rank)));
         setUltimoPremio(playerData.lastPrize || ultimoPremio);
-  
+    
         if (playerData.inTurn) {
           toast.info('¡Es tu turno!');
         }
       } else {
         console.warn(`No se encontró al jugador con nombre "${name}".`);
       }
-  
+    
+      // Verificar si hay ganadores
       if (data.winners?.length) {
         toast.success(`Ganadores: ${data.winners.join(', ')}`);
-        setIsGameFinished(true);
-        iniciarDecisionPrompt(data);
+    
+        // Esperar 10 segundos antes de continuar
+        setTimeout(() => {
+          // Reiniciar la sala
+          if (socketRef.current && roomId) {
+            socketRef.current.emit('restartGame', { roomId }); // Enviar evento para reiniciar el juego
+          }
+    
+          // Mostrar prompt de decisión para los jugadores
+          setShowDecisionPrompt(true);
+        }, 10000); // Espera de 10 segundos
       }
     };
-  
+    
+
     newSocket.on('roomUpdate', handleRoomUpdate);
-  
+
     return () => {
       newSocket.off('roomUpdate', handleRoomUpdate);
       newSocket.disconnect();
     };
-  }, [name, id, roomId]);
+  }, [name, id, roomId]); // Eliminamos 'ultimoPremio' del array de dependencias
 
   const actualizarEstadoJuego = (gameState) => {
     console.log("Actualizando estado del juego:", gameState); // Depuración
@@ -153,99 +159,6 @@ const BlackjackTable = () => {
     } else {
       console.warn('gameState o gameState.players no disponible o vacío');
     }
-  };
-
-  const iniciarDecisionPrompt = (data) => {
-    console.log("Iniciando prompt de decisión con data:", data);
-  
-    const initialDecisions = {};
-    data.players.forEach((player) => {
-      initialDecisions[player.nickName] = null;
-    });
-  
-    // Inicializar la referencia mutable
-    playersDecisionRef.current = initialDecisions;
-    
-    // Sincronizar el estado de React
-    setPlayersDecision({ ...initialDecisions });
-  
-    // Configurar el temporizador
-    const countdown = setTimeout(() => {
-      const finalDecisions = { ...playersDecisionRef.current };
-      for (let playerNickName in finalDecisions) {
-        if (finalDecisions[playerNickName] === null) {
-          finalDecisions[playerNickName] = false;
-        }
-      }
-      notificarDecisiones(finalDecisions);
-    }, 15000);
-  
-    setTimer(countdown);
-  };
-
-  const handleDecision = (playerNickName, decision) => {
-    console.log(`handleDecision llamado para ${playerNickName} con decisión ${decision}`);
-  
-    // Actualizar la referencia mutable
-    playersDecisionRef.current = {
-      ...playersDecisionRef.current,
-      [playerNickName]: decision,
-    };
-  
-    // Sincronizar el estado de React
-    setPlayersDecision({ ...playersDecisionRef.current });
-  
-    console.log("Decisión actualizada en playersDecisionRef:", playersDecisionRef.current);
-  
-    // Verificar si todas las decisiones están hechas
-    const allDecisionsMade = Object.values(playersDecisionRef.current).every(
-      (decision) => decision !== null
-    );
-  
-    if (allDecisionsMade) {
-      clearTimeout(timer);
-      notificarDecisiones(playersDecisionRef.current); // Enviar decisiones al servidor
-    }
-  };
-
-  const renderDecisionPrompt = () => {
-    if (isGameFinished) {
-          console.log("Renderizando prompt de decisión");
-    console.log("gameState.players:", gameState.players); // Añade este log
-    console.log("playersDecision:", playersDecision); // Añade este log
-
-      return (
-        <div className="decision-prompt">
-          {gameState.players
-            .filter((player) => playersDecision[player.nickName] === null)
-            .map((player) => (
-              <div key={player.nickName}>
-                <p>{player.nickName}, ¿quieres jugar de nuevo?</p>
-                <button onClick={() => handleDecision(player.nickName, true)}>Sí</button>
-                <button onClick={() => handleDecision(player.nickName, false)}>No</button>
-              </div>
-            ))}
-        </div>
-      );
-    }
-    return null;
-  };
-
-  const notificarDecisiones = (decisions) => {
-    console.log("Decisiones recopiladas:", decisions);
-  
-    const playersContinuing = Object.entries(decisions)
-      .filter(([_, decision]) => decision)
-      .map(([playerNickName]) => playerNickName);
-  
-    console.log("Jugadores que continúan:", playersContinuing);
-  
-    if (playersContinuing.length > 0) {
-      socketRef.current.emit("restartGame", { roomId, playerNickNames: playersContinuing });
-    } else {
-      console.warn("No hay jugadores que continúan.");
-    }
-    setIsGameFinished(false);
   };
 
   const seleccionarFicha = (color, valor) => {
@@ -279,6 +192,33 @@ const BlackjackTable = () => {
     }
   };
 
+  const handleDecision = (decision) => {
+    setShowDecisionPrompt(false);
+  
+    if (decision) {
+      // El jugador quiere continuar
+      if (socketRef.current && roomId) {
+        socketRef.current.emit('joinRoom', roomId.toString());
+      }
+    } else {
+      // El jugador decide salir
+      navigate(-1, { replace: true });
+    }
+  };
+  
+  const renderDecisionPrompt = () => {
+    if (showDecisionPrompt) {
+      return (
+        <div className="decision-prompt">
+          <p>¿Quieres jugar de nuevo?</p>
+          <button onClick={() => handleDecision(true)}>Sí</button>
+          <button onClick={() => handleDecision(false)}>No</button>
+        </div>
+      );
+    }
+    return null;
+  };
+
   const renderChips = (chips) =>
     chips.map((chip, index) => {
       const chipImages = {
@@ -292,6 +232,7 @@ const BlackjackTable = () => {
         <img key={index} src={chipImages[chip]} alt={`${chip} chip`} className="player-chip" />
       );
     });
+
   return (
     <div className="table-container">
       <ToastContainer />

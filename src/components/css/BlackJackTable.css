@@ -6,6 +6,36 @@
   background-color: #066235;
 }
 
+.decision-prompt {
+  position: fixed; /* Fija el prompt en la pantalla */
+  top: 50%; /* Centra verticalmente */
+  left: 50%; /* Centra horizontalmente */
+  transform: translate(-50%, -50%); /* Ajusta la posición para centrar */
+  background-color: white; /* Fondo blanco */
+  border-radius: 10px; /* Bordes redondeados */
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); /* Sombra */
+  padding: 20px; /* Espaciado interno */
+  z-index: 2000; /* Asegúrate de que esté sobre otros elementos */
+  text-align: center; /* Centra el contenido del texto */
+  font-family: 'Now-Medium', sans-serif;
+}
+
+.decision-prompt button {
+  margin: 10px; /* Espaciado entre botones */
+  padding: 10px 20px; /* Tamaño del botón */
+  font-size: 16px; /* Tamaño del texto */
+  border-radius: 5px; /* Bordes redondeados */
+  border: none; /* Sin borde */
+  cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+  background-color: #066235; /* Color del botón */
+  color: white; /* Color del texto */
+  font-family: 'Now-Medium', sans-serif;
+}
+
+.decision-prompt button:hover {
+  background-color: #044722; /* Cambia el color al pasar el mouse */
+}
+
 .table-header {
   display: flex;
   justify-content: space-between;
@@ -254,3 +284,4 @@ font-weight: 700;
   top: 25%;
   left: 40%;
 }
+
