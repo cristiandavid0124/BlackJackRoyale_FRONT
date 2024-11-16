@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-
 import { io } from 'socket.io-client';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import './css/BlackJackTable.css';
 import azul from './img/azul.png';
 import amarillo from './img/amarillo.png';
@@ -13,7 +14,6 @@ import logo from './img/logo.PNG';
 import Bitmap53 from './img/Bitmap57.png'; // Carta por defecto
 import luigiCasino from './img/luigicasino.gif';
 import signout from './img/previous.png';
-
 
 // Función para obtener la imagen de bitmap correspondiente a la carta
 const getBitmapImage = (suit, rank) => {
@@ -56,7 +56,6 @@ const getBitmapImage = (suit, rank) => {
   }
 };
 
-
 const BlackjackTable = () => {
   const location = useLocation();
   const { id, name, roomId } = location.state || {};
@@ -71,7 +70,6 @@ const BlackjackTable = () => {
   const [isTurn, setIsTurn] = useState(false);
   const navigate = useNavigate();
 
-
   const valoresFichas = {
     AZUL: 5,
     AMARILLO: 1,
@@ -80,51 +78,48 @@ const BlackjackTable = () => {
     NEGRO: 100,
   };
 
-
   const handleSignOut = () => {
     setSaldo(null);
     setApuestaActual(null);
     setUltimoPremio(null);
-    navigate('/BlackJackRoyale/SelectTable'); // Redirige a SelectTable
+    navigate(-1, { replace: true });
   };
 
   useEffect(() => {
     const newSocket = io('http://localhost:9092', { query: { name, id } });
     setSocket(newSocket);
-  
+
     newSocket.emit('joinRoom', roomId.toString(), () => {
-      console.log(`Unido a la sala ${roomId}`);
+      toast.success(`Unido a la sala ${roomId}`);
     });
-  
+
     newSocket.on('roomUpdate', (data) => {
       setGameState(data);
       actualizarEstadoJuego(data);
-  
+
       const playerData = data.players.find((player) => player.nickName === name);
       if (playerData) {
         setSaldo(playerData.amount);
         setApuestaActual(playerData.bet);
         setUserCards(playerData.hand.map((card) => getBitmapImage(card.suit, card.rank)));
         setUltimoPremio(playerData.lastPrize || ultimoPremio);
-  
-        // Muestra la alerta si el jugador está en turno
+
         if (playerData.inTurn) {
-          window.alert("¡Es tu turno!");
+          toast.info("¡Es tu turno!");
         }
       } else {
         console.warn(`No se encontró al jugador con nombre "${name}".`);
       }
-  
+
       if (data.winners.length) {
-        alert(`Ganadores: ${data.winners.join(", ")}`);
+        toast.success(`Ganadores: ${data.winners.join(", ")}`);
       }
     });
-  
+
     return () => {
       if (newSocket) newSocket.disconnect();
     };
   }, [name, id, roomId]);
-  
 
   const actualizarEstadoJuego = (gameState) => {
     if (gameState && gameState.players) {
@@ -145,11 +140,9 @@ const BlackjackTable = () => {
     }
   };
 
-  
-
   const seleccionarFicha = (color, valor) => {
     if (saldo < valor) {
-      alert('Saldo insuficiente para esta ficha');
+      toast.error('Saldo insuficiente para esta ficha');
       return;
     }
     setFichasSeleccionadas([...fichasSeleccionadas, color]);
@@ -164,16 +157,16 @@ const BlackjackTable = () => {
       setFichasSeleccionadas([]);
       setUltimoPremio(apuestaActual);
       setApuestaActual(0);
+      toast.success("Apuesta realizada con éxito");
     }
   };
 
   const playerAction = (actionType) => {
     if (socket && roomId) {
       socket.emit('playerAction', { type: actionType, roomId });
+      toast.info(`Acción enviada: ${actionType.toUpperCase()}`);
     }
   };
-
-
 
   const renderChips = (chips) => chips.map((chip, index) => {
     const chipImages = { 
@@ -188,6 +181,7 @@ const BlackjackTable = () => {
 
   return (
     <div className="table-container">
+      <ToastContainer />
       <header className="table-header">
         <div className="header-logo">
           <img src={logo} alt="Logo" className="logo-header" />
@@ -209,7 +203,6 @@ const BlackjackTable = () => {
 
       <div className="main-container">
         <div className="left-column">
-     
           <div className="card-slots">
             {userCards.map((card, index) => (
               <img key={index} src={card} alt={`Carta ${index + 1}`} className="card-slot" />
@@ -217,12 +210,10 @@ const BlackjackTable = () => {
           </div>
 
           <div className="button-row">
-          <button className="boton-doblar" onClick={() => playerAction('double')}>DOUBLE</button>
+            <button className="boton-doblar" onClick={() => playerAction('double')}>DOUBLE</button>
             <button className="boton-robar" onClick={() => playerAction('hit')}>HIT</button>
             <button className="boton-quedarse" onClick={() => playerAction('stand')}>STAND</button>
           </div>
-         
-       
 
           <div className="fichas">
             <img src={azul} alt="Ficha azul" className="ficha" onClick={() => seleccionarFicha('AZUL', valoresFichas.AZUL)} />
@@ -234,11 +225,9 @@ const BlackjackTable = () => {
           <button className="boton-apostar" onClick={apostar}>Apostar</button>
         </div>
 
- 
-
         <div className="right-column">
           <div className="mesa-container">
-          <img src={luigiCasino} alt="Dealer GIF" className="luigi-gif" />
+            <img src={luigiCasino} alt="Dealer GIF" className="luigi-gif" />
             <img src={mesa} alt="mesa" className="mesa" />
 
             {[1, 2, 3, 4, 5, 6].map((player) => (

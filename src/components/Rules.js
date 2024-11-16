@@ -6,7 +6,7 @@ const Rules = () => {
     const navigate = useNavigate();
 
     const handleGoBack = () => {
-        navigate('/BlackJackRoyale/SelectTable'); // Navega a la página de selección de mesa
+        navigate(-1, { replace: true });// Navega a la página de selección de mesa
     };
 
     return (
