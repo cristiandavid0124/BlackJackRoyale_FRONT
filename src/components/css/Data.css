@@ -8,7 +8,7 @@ body {
     padding: 0;
 }
 
-/* Contenedor principal para centrar la tarjeta */
+
 .user-info-container {
     display: flex;
     flex-direction: column;

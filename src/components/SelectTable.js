@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+// SelectTable.js
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
-import logo from './img/logo1.PNG';
+import Header from './Header';
 import './css/SelectTable.css';
 
 const SelectTable = () => {
@@ -9,12 +11,32 @@ const SelectTable = () => {
 
     const { id, name } = location.state || {};
 
+    const [tables, setTables] = useState([]);
     const [selectedTable, setSelectedTable] = useState(null);
-    const [activeButton, setActiveButton] = useState('Información del Juego');
+    const [activeButton, setActiveButton] = useState('SelectTable');
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-    const handleSelectTable = (tableNumber) => {
-        console.log(`Mesa ${tableNumber} seleccionada`);
-        setSelectedTable(tableNumber);
+    useEffect(() => {
+        const fetchTables = async () => {
+            try {
+                const response = await axios.get('http://localhost:8080/api/rooms');
+                const roomIds = response.data.map((room) => room.roomId);
+                setTables(roomIds);
+            } catch (err) {
+                console.error('Error fetching tables:', err);
+                setError('Error al cargar las salas. Por favor, intenta nuevamente.');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchTables();
+    }, []);
+
+    const handleSelectTable = (tableId) => {
+        console.log(`Mesa ${tableId} seleccionada`);
+        setSelectedTable(tableId);
     };
 
     const handleGoToTable = () => {
@@ -29,49 +51,34 @@ const SelectTable = () => {
         }
     };
 
-    const handleNavigation = (route) => {
-        setActiveButton(route);
-        if (route === 'Rules') {
-          navigate('/BlackJackRoyale/Rules');
-        }
-      };
-      
-
     const handleGoBack = () => {
         navigate('/BlackJackRoyale/UserInfo');
     };
 
+    if (loading) {
+        return <p>Cargando salas...</p>;
+    }
+
+    if (error) {
+        return <p>{error}</p>;
+    }
+
     return (
         <>
-            <header className="Options">
-                <div className="logo">
-                    <img src={logo} alt="Logo" className="logo-header" />
-                </div>
-                <nav className="menu">
-                    {['Rules', 'Games', 'History', 'Profile'].map((item) => (
-                        <button
-                            key={item}
-                            className={`btn menu-button ${activeButton === item ? 'active' : ''}`}
-                            onClick={() => handleNavigation(item)}
-                        >
-                            {item}
-                        </button>
-                    ))}
-                </nav>
-            </header>
+            <Header activeButton={activeButton} onNavigate={setActiveButton} />
 
             <div className="main-content">
                 <div className="select-table-container">
                     <h2>Selecciona una Mesa</h2>
-                    
+
                     <div className="table-options">
-                        {[1, 2, 3, 4, 5].map((table) => (
+                        {tables.map((tableId) => (
                             <button
-                                key={table}
-                                onClick={() => handleSelectTable(table)}
-                                className={`btn table-button ${selectedTable === table ? 'selected' : ''}`}
+                                key={tableId}
+                                onClick={() => handleSelectTable(tableId)}
+                                className={`btn table-button ${selectedTable === tableId ? 'selected' : ''}`}
                             >
-                                Mesa {table}
+                                Mesa {tableId}
                             </button>
                         ))}
                     </div>
@@ -84,8 +91,7 @@ const SelectTable = () => {
                             </button>
                         </div>
                     )}
-                    
-                    {/* Botón de volver reubicado aquí debajo de las mesas */}
+
                     <button onClick={handleGoBack} className="btn back-button">
                         Volver
                     </button>
@@ -96,5 +102,10 @@ const SelectTable = () => {
 };
 
 export default SelectTable;
+
+
+
+
+
 
 

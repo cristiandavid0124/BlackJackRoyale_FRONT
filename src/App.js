@@ -8,6 +8,7 @@ import SelectTable from './components/SelectTable'; // Importar el nuevo compone
 import Login from './components/Login';
 import ProtectedRoute from './components/ProtectedRoute';
 import Rules from './components/Rules'; // Importar el componente Rules
+import History from  './components/History'; 
 
 const MainContent = () => {
   const { instance, accounts } = useMsal();
@@ -78,7 +79,15 @@ const MainContent = () => {
                         <Rules />
                     </ProtectedRoute>
                 }
-            />              
+            />       
+            <Route
+                path="/BlackJackRoyale/History"
+                element={
+                    <ProtectedRoute>
+                        <History />
+                    </ProtectedRoute>
+                }
+            />            
           </Routes>
         </Router>
       </div>

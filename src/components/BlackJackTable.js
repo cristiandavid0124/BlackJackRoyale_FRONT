@@ -89,7 +89,9 @@ const BlackjackTable = () => {
   };
 
   useEffect(() => {
-    const newSocket = io('http://localhost:9092', { query: { name, id } });
+    console.log("[DEBUG] Inicializando useEffect en BlackjackTable");
+    console.log("[DEBUG] Valores iniciales recibidos:", { id, name, roomId });
+    const newSocket = io('http://localhost:9092', { query: { name, id, roomId } });
     socketRef.current = newSocket;
 
     newSocket.emit('joinRoom', roomId.toString(), () => {
@@ -173,7 +175,12 @@ const BlackjackTable = () => {
   };
 
   const apostar = () => {
+    console.log("[DEBUG] Entrando en la función apostar");
+    console.log("[DEBUG] Estado del socket:", socketRef.current);
+    console.log("[DEBUG] Valor de roomId:", roomId);
+
     if (socketRef.current && roomId) {
+      console.log("Entrando  en la funcion apostar"); 
       const fichasNormalizadas = fichasSeleccionadas.map((color) => color.toUpperCase());
       console.log("Apostando con fichas:", fichasNormalizadas); // Depuración
       socketRef.current.emit('playerBet', { fichas: fichasNormalizadas, roomId });
