@@ -1,21 +1,23 @@
 import React from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import logo from './img/logo1.PNG';
 import './css/Header.css';
-
+import { useUser } from './UserContext';
 const Header = ({ activeButton, onNavigate }) => {
     const navigate = useNavigate();
-    const location = useLocation();
-    const { id, name } = location.state || {};
-
+    const { userId } = useUser(); // Obtener userId del contexto
 
     const handleNavigation = (route) => {
-        onNavigate(route);
+        if (!userId) {
+            console.error('No se encontró userId. Redirección cancelada.');
+            return;
+        }
 
-        // Enviar siempre id y name en el state al navegar
-        navigate(`/BlackJackRoyale/${route}`, {
-            state: { userId: id },
-        });
+        if (onNavigate) {
+            onNavigate(route); // Callback opcional para actualizar estado externo si se necesita
+        }
+
+        navigate(`/BlackJackRoyale/${route}`); // Redirigir al destino
     };
 
     return (
@@ -39,4 +41,3 @@ const Header = ({ activeButton, onNavigate }) => {
 };
 
 export default Header;
-

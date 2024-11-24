@@ -14,6 +14,7 @@ import logo from './img/logo.PNG';
 import Bitmap53 from './img/Bitmap57.png'; // Carta por defecto
 import luigiCasino from './img/luigicasino.gif';
 import signout from './img/previous.png';
+import { useUser } from './UserContext';
 
 // Función para obtener la imagen de bitmap correspondiente a la carta
 const getBitmapImage = (suit, rank) => {
@@ -57,9 +58,10 @@ const getBitmapImage = (suit, rank) => {
 };
 
 const BlackjackTable = () => {
-  const location = useLocation();
-  const { id, name, roomId } = location.state || {};
+  const { userId, userName } = useUser(); // Obtener datos del contexto
   const navigate = useNavigate();
+  const location = useLocation();
+  const roomId = location.state?.roomId;
 
   const [saldo, setSaldo] = useState(null);
   const [apuestaActual, setApuestaActual] = useState(null);
@@ -70,7 +72,7 @@ const BlackjackTable = () => {
   const [userCards, setUserCards] = useState([Bitmap53, Bitmap53]);
   const [isGameFinished, setIsGameFinished] = useState(false);
   const [showDecisionPrompt, setShowDecisionPrompt] = useState(false);
-
+  
   const socketRef = useRef(null);
 
   const valoresFichas = {
@@ -89,51 +91,52 @@ const BlackjackTable = () => {
   };
 
   useEffect(() => {
-    console.log("[DEBUG] Inicializando useEffect en BlackjackTable");
-    console.log("[DEBUG] Valores iniciales recibidos:", { id, name, roomId });
-    const newSocket = io('http://localhost:9092', { query: { name, id, roomId } });
+    if (!userId || !userName || !roomId) {
+      console.error('No se encontró userId, userName o roomId');
+      return;
+    }
+    console.log("[DEBUG] Inicializando conexión con el servidor");
+    console.log("[DEBUG] Usuario y sala:", { userId, userName, roomId });
+
+    // Conectarse al socket utilizando el userId (email) y userName (nickname)
+    const newSocket = io('http://localhost:9092', { query: { name: userName, id: userId, roomId } });
     socketRef.current = newSocket;
 
-    newSocket.emit('joinRoom', roomId.toString(), () => {
+    newSocket.emit('joinRoom', roomId, () => {
       toast.success(`Unido a la sala ${roomId}`);
     });
+
     const handleRoomUpdate = (data) => {
-      console.log(`[${name}] Recibido 'roomUpdate' con data:`, data);
+      console.log(`[DEBUG] Recibido 'roomUpdate':`, data);
       setGameState(data);
-    
+
       actualizarEstadoJuego(data);
-    
-      const playerData = data.players.find((player) => player.nickName === name);
+
+      const playerData = data.players.find((player) => player.nickName === userName);
       if (playerData) {
         setSaldo(playerData.amount);
         setApuestaActual(playerData.bet);
         setUserCards(playerData.hand.map((card) => getBitmapImage(card.suit, card.rank)));
         setUltimoPremio(playerData.lastPrize || ultimoPremio);
-    
+
         if (playerData.inTurn) {
           toast.info('¡Es tu turno!');
         }
       } else {
-        console.warn(`No se encontró al jugador con nombre "${name}".`);
+        console.warn(`No se encontró al jugador con nickName "${userName}".`);
       }
-    
-      // Verificar si hay ganadores
+
       if (data.winners?.length) {
         toast.success(`Ganadores: ${data.winners.join(', ')}`);
-    
-        // Esperar 10 segundos antes de continuar
+
         setTimeout(() => {
-          // Reiniciar la sala
           if (socketRef.current && roomId) {
-            socketRef.current.emit('restartGame', { roomId }); // Enviar evento para reiniciar el juego
+            socketRef.current.emit('restartGame', { roomId });
           }
-    
-          // Mostrar prompt de decisión para los jugadores
           setShowDecisionPrompt(true);
-        }, 10000); // Espera de 10 segundos
+        }, 10000);
       }
     };
-    
 
     newSocket.on('roomUpdate', handleRoomUpdate);
 
@@ -141,10 +144,9 @@ const BlackjackTable = () => {
       newSocket.off('roomUpdate', handleRoomUpdate);
       newSocket.disconnect();
     };
-  }, [name, id, roomId]); // Eliminamos 'ultimoPremio' del array de dependencias
+  }, [userId, userName, roomId]);
 
   const actualizarEstadoJuego = (gameState) => {
-    console.log("Actualizando estado del juego:", gameState); // Depuración
     if (gameState && gameState.players) {
       const updatedPlayerInfo = {};
       gameState.players.forEach((player, index) => {
@@ -164,7 +166,6 @@ const BlackjackTable = () => {
   };
 
   const seleccionarFicha = (color, valor) => {
-    console.log(`Seleccionando ficha: ${color} con valor ${valor}`); // Depuración
     if (saldo < valor) {
       toast.error('Saldo insuficiente para esta ficha');
       return;
@@ -175,14 +176,8 @@ const BlackjackTable = () => {
   };
 
   const apostar = () => {
-    console.log("[DEBUG] Entrando en la función apostar");
-    console.log("[DEBUG] Estado del socket:", socketRef.current);
-    console.log("[DEBUG] Valor de roomId:", roomId);
-
     if (socketRef.current && roomId) {
-      console.log("Entrando  en la funcion apostar"); 
       const fichasNormalizadas = fichasSeleccionadas.map((color) => color.toUpperCase());
-      console.log("Apostando con fichas:", fichasNormalizadas); // Depuración
       socketRef.current.emit('playerBet', { fichas: fichasNormalizadas, roomId });
       setFichasSeleccionadas([]);
       setUltimoPremio(apuestaActual);
@@ -193,7 +188,6 @@ const BlackjackTable = () => {
 
   const playerAction = (actionType) => {
     if (socketRef.current && roomId) {
-      console.log(`Enviando acción del jugador: ${actionType}`); // Depuración
       socketRef.current.emit('playerAction', { type: actionType, roomId });
       toast.info(`Acción enviada: ${actionType.toUpperCase()}`);
     }
@@ -201,18 +195,16 @@ const BlackjackTable = () => {
 
   const handleDecision = (decision) => {
     setShowDecisionPrompt(false);
-  
+
     if (decision) {
-      // El jugador quiere continuar
       if (socketRef.current && roomId) {
         socketRef.current.emit('joinRoom', roomId.toString());
       }
     } else {
-      // El jugador decide salir
       navigate(-1, { replace: true });
     }
   };
-  
+
   const renderDecisionPrompt = () => {
     if (showDecisionPrompt) {
       return (
@@ -323,3 +315,5 @@ const BlackjackTable = () => {
 };
 
 export default BlackjackTable;
+
+

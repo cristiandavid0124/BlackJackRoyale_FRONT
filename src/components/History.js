@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Header from "./Header";
 import Bitmap53 from "./img/Bitmap57.png"; 
 import "./css/History.css";
+import { useUser } from './UserContext';
 
 const getBitmapImage = (suit, rank) => {
   const suitToBitmapStartIndex = {
@@ -60,19 +61,22 @@ const calculateTotalBet = (chips) => {
 };
 
 const History = () => {
-  const location = useLocation();
   const navigate = useNavigate();
+  const { userId } = useUser(); // Obtener userId del contexto
 
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentUserNickName, setCurrentUserNickName] = useState(null);
-  
 
   useEffect(() => {
     const fetchHistory = async () => {
+      if (!userId) {
+        console.error("No se encontró userId");
+        return;
+      }
       try {
         const response = await fetch(
-          `http://localhost:8080/users/${encodeURIComponent(location.state?.userId)}`
+          `http://localhost:8080/users/${encodeURIComponent(userId)}`
         );
         if (!response.ok) {
           throw new Error(`Error al obtener el historial. Código: ${response.status}`);
@@ -88,7 +92,7 @@ const History = () => {
     };
 
     fetchHistory();
-  }, [location.state]);
+  }, [userId]);
 
   const renderCards = (cards) =>
     cards.map((card, i) => (
@@ -111,7 +115,7 @@ const History = () => {
 
   return (
     <div className="history-container">
-      <Header activeButton="History" onNavigate={() => navigate("/BlackJackRoyale/History")} />
+      <Header activeButton="History" /> {/* El botón activo es "History" */}
 
       <div className="history-grid">
         {loading ? (

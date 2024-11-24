@@ -1,12 +1,19 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './css/Rules.css'; // Asegúrate de tener el CSS correcto
+import { useUser } from './UserContext';
 
 const Rules = () => {
     const navigate = useNavigate();
+    const { userId } = useUser(); // Obtener userId del contexto
 
     const handleGoBack = () => {
-        navigate(-1, { replace: true });// Navega a la página de selección de mesa
+        if (!userId) {
+            console.error("No se encontró userId, redirigiendo a la página principal.");
+            navigate('/BlackJackRoyale', { replace: true });
+            return;
+        }
+        navigate(-1, { replace: true }); // Navega a la página anterior
     };
 
     return (
@@ -62,7 +69,7 @@ const Rules = () => {
             {/* Botón para regresar a la página de selección de mesa */}
             <div className="button-container">
                 <button onClick={handleGoBack} className="back-button">
-                    Volver 
+                    Volver
                 </button>
             </div>
         </div>
@@ -70,5 +77,6 @@ const Rules = () => {
 };
 
 export default Rules;
+
 
 

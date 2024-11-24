@@ -1,15 +1,13 @@
-// SelectTable.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Header from './Header';
 import './css/SelectTable.css';
+import { useUser } from './UserContext';
 
 const SelectTable = () => {
     const navigate = useNavigate();
-    const location = useLocation();
-
-    const { id, name } = location.state || {};
+    const { userId, userName } = useUser(); // Obtener datos del contexto
 
     const [tables, setTables] = useState([]);
     const [selectedTable, setSelectedTable] = useState(null);
@@ -19,6 +17,11 @@ const SelectTable = () => {
 
     useEffect(() => {
         const fetchTables = async () => {
+            if (!userId) {
+                console.error('No se encontró userId, redirigiendo a la página principal.');
+                navigate('/BlackJackRoyale', { replace: true });
+                return;
+            }
             try {
                 const response = await axios.get('http://localhost:8080/api/rooms');
                 const roomIds = response.data.map((room) => room.roomId);
@@ -32,7 +35,7 @@ const SelectTable = () => {
         };
 
         fetchTables();
-    }, []);
+    }, [userId, navigate]);
 
     const handleSelectTable = (tableId) => {
         console.log(`Mesa ${tableId} seleccionada`);
@@ -40,14 +43,19 @@ const SelectTable = () => {
     };
 
     const handleGoToTable = () => {
+        if (!userId || !userName) {
+            console.error('Datos del usuario no disponibles. Redirigiendo...');
+            navigate('/BlackJackRoyale', { replace: true });
+            return;
+        }
         if (selectedTable) {
             navigate('/BlackJackRoyale/Game', {
                 state: {
-                    id,
-                    name,
-                    roomId: selectedTable,
+                  roomId: selectedTable,
                 },
-            });
+              });
+        } else {
+            setError('Por favor selecciona una mesa antes de continuar.');
         }
     };
 
@@ -102,10 +110,3 @@ const SelectTable = () => {
 };
 
 export default SelectTable;
-
-
-
-
-
-
-
