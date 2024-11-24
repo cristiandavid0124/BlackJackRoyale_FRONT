@@ -1,53 +1,97 @@
-@import url('https://fonts.googleapis.com/css2?family=Gloria+Hallelujah&display=swap'); /* Importa una fuente estilo tiza */
+@import url('https://fonts.googleapis.com/css2?family=Gloria+Hallelujah&display=swap');
 
 .rules-container {
-    background-color: #f0f8ff;
-    background-image: url('../img/pizarrón.png');
+    background-color: rgba(0, 0, 0, 0.8); /* Fondo negro semitransparente */
+    background-image: url('../img/fondo3.webp');
     background-size: cover;
     background-position: center;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    color: #ffffff; /* Texto en blanco */
-    font-family: 'Gloria Hallelujah', 'Chalkduster', sans-serif; /* Aplica una fuente estilo tiza */
-    font-size: 1.2em; /* Tamaño de fuente ajustado para mejor legibilidad */
+    padding: 30px;
+    border-radius: 15px; /* Bordes redondeados */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6); /* Sombra elegante */
+    color: #F8F9FA; /* Texto blanco suave */
+    font-family: 'Gloria Hallelujah', sans-serif;
+    font-size: 1.1em;
+    line-height: 1.8; /* Mejora la legibilidad */
+    max-width: 800px; /* Limita el ancho */
+    margin: 40px auto; /* Centra el contenedor */
 }
 
-.rules-container h1,
-.rules-container h2,
-.rules-container p,
-.rules-container li {
+/* Encabezados */
+.rules-container h1 {
+    font-size: 2.5em;
+    text-align: center;
+    color: #D4AF37; /* Dorado */
+    margin-bottom: 30px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8); /* Efecto de sombra */
+}
+
+.rules-container h2 {
+    font-size: 1.8em;
+    color: #FAD02E; /* Amarillo suave */
+    margin-top: 20px;
     margin-bottom: 15px;
-    line-height: 1.5;
+    border-bottom: 2px solid #FAD02E; /* Línea decorativa */
+    padding-bottom: 5px;
+}
+
+/* Texto y listas */
+.rules-container p,
+.rules-container ul {
+    margin-bottom: 20px;
+    color: #F8F9FA; /* Blanco suave */
+}
+
+.rules-container li {
+    margin-bottom: 10px;
+}
+
+/* Botón de regreso */
+.button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
 }
 
 .back-button {
-    margin-top: 20px;
-    padding: 10px 20px;
-    font-size: 1em;
-    color: #ffffff; /* Color del texto */
-    background-color: transparent; /* Fondo invisible */
-    border: 2px solid #ffffff; /* Borde visible */
-    border-radius: 5px;
+    padding: 12px 25px;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #D4AF37; /* Dorado */
+    background-color: transparent; /* Fondo transparente */
+    border: 2px solid #D4AF37; /* Borde dorado */
+    border-radius: 8px;
     cursor: pointer;
     text-align: center;
-    text-decoration: none;
-    transition: color 0.3s ease, border-color 0.3s ease, transform 0.3s ease; /* Transición suave */
+    text-transform: uppercase;
+    transition: all 0.3s ease; /* Transición suave */
 }
 
-/* Contenedor que centra el botón */
-.button-container {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-}
-
-/* Efecto hover "invisible" */
 .back-button:hover {
-    color: #ffffff; /* Cambia el color del texto al pasar el ratón */
-    border-color: #ffffff; /* Cambia el color del borde */
-    transform: scale(1.05); /* Aumenta ligeramente el tamaño */
+    background-color: #D4AF37; /* Fondo dorado */
+    color: #000; /* Texto negro */
+    transform: scale(1.1); /* Efecto de aumento */
 }
+
+/* Adaptación para pantallas pequeñas */
+@media (max-width: 768px) {
+    .rules-container {
+        padding: 20px;
+        font-size: 1em;
+    }
+
+    .rules-container h1 {
+        font-size: 2em;
+    }
+
+    .rules-container h2 {
+        font-size: 1.5em;
+    }
+
+    .back-button {
+        font-size: 1em;
+        padding: 10px 20px;
+    }
+}
+
 
 
