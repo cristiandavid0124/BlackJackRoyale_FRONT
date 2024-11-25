@@ -1,5 +1,4 @@
 import { LogLevel } from '@azure/msal-browser';
-
 export const msalConfig = {
     auth: {
         clientId: '066fef70-45bd-422a-a870-149ae2f088f4', // This is the ONLY mandatory field that you need to supply.
