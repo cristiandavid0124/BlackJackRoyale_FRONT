@@ -106,8 +106,8 @@ const History = () => {
 
   const renderWinnerHand = (winnerName, hand) => (
     <div className="winner-hand">
-      <p>
-        <strong>Mano del Ganador ({winnerName}):</strong>
+      <p className="text-mano-ganador">
+        Mano del Ganador ({winnerName}):
       </p>
       <div className="cards">{renderCards(hand)}</div>
     </div>
@@ -146,7 +146,7 @@ const History = () => {
                   </p>
                   <div className="cards-container">
                     <div className="cards">
-                      <p>Tu mano:</p>
+                      <p className="text-tu-mano">Tu mano:</p>
                       {renderCards(currentPlayer?.hand || [])}
                     </div>
                     <div className="cards">

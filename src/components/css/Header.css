@@ -9,9 +9,7 @@ header.Options {
     z-index: 10; /* Garantiza que el header esté sobre otros elementos */
 }
 
-header.Options + * {
-    margin-top: 20px; /* Agrega espacio debajo del header */
-}
+
 
 .logo .logo-header {
     height: 80px;

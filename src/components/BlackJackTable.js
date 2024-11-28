@@ -1,6 +1,5 @@
-import React, { useEffect, useState, useRef } from 'react'; 
+import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { io } from 'socket.io-client';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './css/BlackJackTable.css';
@@ -15,8 +14,8 @@ import Bitmap53 from './img/Bitmap57.png'; // Carta por defecto
 import luigiCasino from './img/luigicasino.gif';
 import signout from './img/previous.png';
 import { useUser } from './UserContext';
+import { useSocket } from './SocketContext';
 
-// Función para obtener la imagen de bitmap correspondiente a la carta
 const getBitmapImage = (suit, rank) => {
   const suitToBitmapStartIndex = {
     Clubs: 1,
@@ -58,7 +57,7 @@ const getBitmapImage = (suit, rank) => {
 };
 
 const BlackjackTable = () => {
-  const { userId, userName } = useUser(); // Obtener datos del contexto
+  const { userId, userName } = useUser();
   const navigate = useNavigate();
   const location = useLocation();
   const roomId = location.state?.roomId;
@@ -72,8 +71,8 @@ const BlackjackTable = () => {
   const [userCards, setUserCards] = useState([Bitmap53, Bitmap53]);
   const [isGameFinished, setIsGameFinished] = useState(false);
   const [showDecisionPrompt, setShowDecisionPrompt] = useState(false);
-  
-  const socketRef = useRef(null);
+
+  const { socket, initializeSocket, isSocketReady } = useSocket();
 
   const valoresFichas = {
     AZUL: 5,
@@ -84,67 +83,76 @@ const BlackjackTable = () => {
   };
 
   const handleSignOut = () => {
-    setSaldo(null);
+    if (socket) {
+      console.log('Notificando al servidor sobre la desconexión personalizada.');
+      socket.emit('customDisconnect', { reason: 'Sign out by user', roomId }); // Notificar al servidor
+      socket.disconnect(); // Desconectar directamente el socket
+    }
+      setSaldo(null);
     setApuestaActual(null);
     setUltimoPremio(null);
-    navigate(-1, { replace: true });
+    setFichasSeleccionadas([]);
+    setGameState(null);
+    setPlayerInfo({});
+    setUserCards([Bitmap53, Bitmap53]);
+      navigate('/BlackJackRoyale/SelectTable', { replace: true });
   };
+  
 
   useEffect(() => {
+    const activeSocket = initializeSocket();
+
     if (!userId || !userName || !roomId) {
-      console.error('No se encontró userId, userName o roomId');
+      console.error('Datos insuficientes para unirse a la sala');
+      navigate('/BlackJackRoyale', { replace: true });
       return;
     }
-    console.log("[DEBUG] Inicializando conexión con el servidor");
-    console.log("[DEBUG] Usuario y sala:", { userId, userName, roomId });
 
-    // Conectarse al socket utilizando el userId (email) y userName (nickname)
-    const newSocket = io('http://localhost:9092', { query: { name: userName, id: userId, roomId } });
-    socketRef.current = newSocket;
+    if (activeSocket && isSocketReady) {
+      console.log(`Jugador ${userId} se unió a la sala ${roomId}`);
+      activeSocket.emit('joinRoom', { userId, roomId });
 
-    newSocket.emit('joinRoom', roomId, () => {
-      toast.success(`Unido a la sala ${roomId}`);
-    });
+      const handleRoomUpdate = (data) => {
+        console.log(`[DEBUG] Recibido 'roomUpdate':`, data);
+        setGameState(data);
+        actualizarEstadoJuego(data);
 
-    const handleRoomUpdate = (data) => {
-      console.log(`[DEBUG] Recibido 'roomUpdate':`, data);
-      setGameState(data);
+        const playerData = data.players.find((player) => player.nickName === userName);
+        if (playerData) {
+          setSaldo(playerData.amount);
+          setApuestaActual(playerData.bet);
+          setUserCards(
+            playerData.hand.map((card) => getBitmapImage(card.suit, card.rank))
+          );
+          setUltimoPremio(playerData.lastPrize || ultimoPremio);
 
-      actualizarEstadoJuego(data);
-
-      const playerData = data.players.find((player) => player.nickName === userName);
-      if (playerData) {
-        setSaldo(playerData.amount);
-        setApuestaActual(playerData.bet);
-        setUserCards(playerData.hand.map((card) => getBitmapImage(card.suit, card.rank)));
-        setUltimoPremio(playerData.lastPrize || ultimoPremio);
-
-        if (playerData.inTurn) {
-          toast.info('¡Es tu turno!');
-        }
-      } else {
-        console.warn(`No se encontró al jugador con nickName "${userName}".`);
-      }
-
-      if (data.winners?.length) {
-        toast.success(`Ganadores: ${data.winners.join(', ')}`);
-
-        setTimeout(() => {
-          if (socketRef.current && roomId) {
-            socketRef.current.emit('restartGame', { roomId });
+          if (playerData.inTurn) {
+            toast.info('¡Es tu turno!');
           }
-          setShowDecisionPrompt(true);
-        }, 10000);
-      }
-    };
+        } else {
+          console.warn(`No se encontró al jugador con nickName "${userName}".`);
+        }
 
-    newSocket.on('roomUpdate', handleRoomUpdate);
+        if (data.winners?.length) {
+          toast.success(`Ganadores: ${data.winners.join(', ')}`);
 
-    return () => {
-      newSocket.off('roomUpdate', handleRoomUpdate);
-      newSocket.disconnect();
-    };
-  }, [userId, userName, roomId]);
+          setTimeout(() => {
+            if (activeSocket && roomId) {
+              activeSocket.emit('restartGame', { roomId });
+            }
+            setShowDecisionPrompt(true);
+          }, 10000);
+        }
+      };
+
+      activeSocket.on('roomUpdate', handleRoomUpdate);
+
+      return () => {
+        activeSocket.off('roomUpdate', handleRoomUpdate);
+        activeSocket.emit('leaveRoom', roomId); // Limpieza al desmontar
+      };
+    }
+  }, [userId, userName, roomId, initializeSocket, isSocketReady, navigate]);
 
   const actualizarEstadoJuego = (gameState) => {
     if (gameState && gameState.players) {
@@ -176,9 +184,9 @@ const BlackjackTable = () => {
   };
 
   const apostar = () => {
-    if (socketRef.current && roomId) {
+    if (socket && roomId) {
       const fichasNormalizadas = fichasSeleccionadas.map((color) => color.toUpperCase());
-      socketRef.current.emit('playerBet', { fichas: fichasNormalizadas, roomId });
+      socket.emit('playerBet', { fichas: fichasNormalizadas, roomId });
       setFichasSeleccionadas([]);
       setUltimoPremio(apuestaActual);
       setApuestaActual(0);
@@ -187,8 +195,8 @@ const BlackjackTable = () => {
   };
 
   const playerAction = (actionType) => {
-    if (socketRef.current && roomId) {
-      socketRef.current.emit('playerAction', { type: actionType, roomId });
+    if (socket && roomId) {
+      socket.emit('playerAction', { type: actionType, roomId });
       toast.info(`Acción enviada: ${actionType.toUpperCase()}`);
     }
   };
@@ -197,11 +205,11 @@ const BlackjackTable = () => {
     setShowDecisionPrompt(false);
 
     if (decision) {
-      if (socketRef.current && roomId) {
-        socketRef.current.emit('joinRoom', roomId.toString());
+      if (socket && roomId) {
+        socket.emit('joinRoom', { userId, roomId });
       }
     } else {
-      navigate(-1, { replace: true });
+      handleSignOut();
     }
   };
 
@@ -264,19 +272,52 @@ const BlackjackTable = () => {
           </div>
 
           <div className="button-row">
-            <button className="boton-doblar" onClick={() => playerAction('double')}>DOUBLE</button>
-            <button className="boton-robar" onClick={() => playerAction('hit')}>HIT</button>
-            <button className="boton-quedarse" onClick={() => playerAction('stand')}>STAND</button>
+            <button className="boton-doblar" onClick={() => playerAction('double')}>
+              DOUBLE
+            </button>
+            <button className="boton-robar" onClick={() => playerAction('hit')}>
+              HIT
+            </button>
+            <button className="boton-quedarse" onClick={() => playerAction('stand')}>
+              STAND
+            </button>
           </div>
 
           <div className="fichas">
-            <img src={azul} alt="Ficha azul" className="ficha" onClick={() => seleccionarFicha('AZUL', valoresFichas.AZUL)} />
-            <img src={amarillo} alt="Ficha amarilla" className="ficha" onClick={() => seleccionarFicha('AMARILLO', valoresFichas.AMARILLO)} />
-            <img src={verde} alt="Ficha verde" className="ficha" onClick={() => seleccionarFicha('VERDE', valoresFichas.VERDE)} />
-            <img src={roja} alt="Ficha roja" className="ficha" onClick={() => seleccionarFicha('ROJO', valoresFichas.ROJO)} />
-            <img src={negra} alt="Ficha negra" className="ficha" onClick={() => seleccionarFicha('NEGRO', valoresFichas.NEGRO)} />
+            <img
+              src={azul}
+              alt="Ficha azul"
+              className="ficha"
+              onClick={() => seleccionarFicha('AZUL', valoresFichas.AZUL)}
+            />
+            <img
+              src={amarillo}
+              alt="Ficha amarilla"
+              className="ficha"
+              onClick={() => seleccionarFicha('AMARILLO', valoresFichas.AMARILLO)}
+            />
+            <img
+              src={verde}
+              alt="Ficha verde"
+              className="ficha"
+              onClick={() => seleccionarFicha('VERDE', valoresFichas.VERDE)}
+            />
+            <img
+              src={roja}
+              alt="Ficha roja"
+              className="ficha"
+              onClick={() => seleccionarFicha('ROJO', valoresFichas.ROJO)}
+            />
+            <img
+              src={negra}
+              alt="Ficha negra"
+              className="ficha"
+              onClick={() => seleccionarFicha('NEGRO', valoresFichas.NEGRO)}
+            />
           </div>
-          <button className="boton-apostar" onClick={apostar}>Apostar</button>
+          <button className="boton-apostar" onClick={apostar}>
+            Apostar
+          </button>
         </div>
 
         <div className="right-column">
@@ -295,12 +336,22 @@ const BlackjackTable = () => {
                     <div className="player-cards">
                       {playerInfo[player].hand.map((card, index) => {
                         const cardImage = getBitmapImage(card.suit, card.rank);
-                        return <img key={index} src={cardImage} alt={`${card.rank} of ${card.suit}`} className="player-card" />;
+                        return (
+                          <img
+                            key={index}
+                            src={cardImage}
+                            alt={`${card.rank} of ${card.suit}`}
+                            className="player-card"
+                          />
+                        );
                       })}
                     </div>
 
                     <div className="player-info">
-                      <p>Nombre: {playerInfo[player]?.name || (player === 6 ? 'Luigi' : 'Esperando...')}</p>
+                      <p>
+                        Nombre:{' '}
+                        {playerInfo[player]?.name || (player === 6 ? 'Luigi' : 'Esperando...')}
+                      </p>
                       {player !== 6 && <p>Apuesta: ${playerInfo[player]?.bet || ''}</p>}
                     </div>
                   </>
@@ -315,5 +366,3 @@ const BlackjackTable = () => {
 };
 
 export default BlackjackTable;
-
-

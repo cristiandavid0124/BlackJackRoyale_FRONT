@@ -11,6 +11,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Rules from './components/Rules';
 import History from './components/History';
 import { useUser } from './components/UserContext';
+import { SocketProvider } from './components/SocketContext'; // Importar SocketProvider
 
 const MainContent = () => {
   const { instance, accounts } = useMsal();
@@ -21,6 +22,7 @@ const MainContent = () => {
 
     if (!activeAccount && accounts && accounts.length > 0) {
       instance.setActiveAccount(accounts[0]);
+      
     }
 
     const account = instance.getActiveAccount();
@@ -30,7 +32,6 @@ const MainContent = () => {
       const userId = idTokenClaims.preferred_username || account.username;
 
       setUserId(userId);
-      // `userName` se establecerá en `IdTokenData.js` después de obtener el nickname
     }
   }, [accounts, instance, setUserId]);
 
@@ -40,10 +41,8 @@ const MainContent = () => {
     <div className="App">
       <Router>
         <Routes>
-          {/* Redirigir automáticamente de '/' a '/BlackJackRoyale' */}
           <Route path="/" element={<Navigate to="/BlackJackRoyale" replace />} />
 
-          {/* Ruta inicial /BlackJackRoyale */}
           <Route
             path="/BlackJackRoyale"
             element={
@@ -55,7 +54,6 @@ const MainContent = () => {
             }
           />
 
-          {/* Ruta protegida para UserInfo */}
           <Route
             path="/BlackJackRoyale/UserInfo"
             element={
@@ -67,12 +65,14 @@ const MainContent = () => {
             }
           />
 
-          {/* Otras rutas protegidas */}
+          {/* Rutas con SocketProvider */}
           <Route
             path="/BlackJackRoyale/SelectTable"
             element={
               <ProtectedRoute>
-                <SelectTable />
+                <SocketProvider>
+                  <SelectTable />
+                </SocketProvider>
               </ProtectedRoute>
             }
           />
@@ -81,7 +81,9 @@ const MainContent = () => {
             path="/BlackJackRoyale/Game"
             element={
               <ProtectedRoute>
-                <BlackJackTable />
+                <SocketProvider>
+                  <BlackJackTable />
+                </SocketProvider>
               </ProtectedRoute>
             }
           />

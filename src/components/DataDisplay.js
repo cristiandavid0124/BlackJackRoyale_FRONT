@@ -1,38 +1,47 @@
-// IdTokenData.js
 import React, { useEffect, useState } from 'react';
 import { getNameAndUsername } from '../utils/claimUtils';
-import BotonAuth from './BotonAuth';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './css/Data.css';
-import logo from './img/logoo.png';
+import popeye from './img/popeye.png';
+import chili from './img/chili.png';
+import pablo from './img/pablo.png';
+import logo from './img/logoo.png'; // Importa el logo
+import BotonAuth from './BotonAuth'; // Botón de autenticación
 import { useUser } from './UserContext';
 
 export const IdTokenData = (props) => {
   const { name, preferred_username } = getNameAndUsername(props.idTokenClaims);
   const navigate = useNavigate();
-  const { setUserId, setUserName } = useUser();
+  const { setUserId, setUserName, setLoadingUser } = useUser();
 
   const [nickname, setNickname] = useState('Player123');
   const [nicknameSaved, setNicknameSaved] = useState(false);
+  const [saldo, setSaldo] = useState(0);
   const [errorMessage, setErrorMessage] = useState('');
   const [nicknameError, setNicknameError] = useState('');
 
   useEffect(() => {
-    setUserId(preferred_username); // Establecer `userId` en el contexto
+    const initializeUser = async () => {
+      setUserId(preferred_username);
 
-    const checkOrCreateUser = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/users/${preferred_username}`);
+        const response = await axios.get(
+          `http://localhost:8080/users/${preferred_username}`
+        );
+        console.log('Datos recibidos del backend:', response.data);
+
         if (response.status === 200) {
-          const nickNameFromServer = response.data.nickName || '';
-          setNickname(nickNameFromServer);
-          setNicknameSaved(!!nickNameFromServer);
-          if (nickNameFromServer) {
-            setUserName(nickNameFromServer); // Establecer `userName` en el contexto
+          const { nickName = '', amount = 0 } = response.data;
+          setNickname(nickName || 'Player123');
+          setSaldo(amount);
+          setNicknameSaved(!!nickName);
+          if (nickName) {
+            setUserName(nickName);
           }
         }
       } catch (error) {
+        console.error('Error verificando el usuario:', error);
         if (error.response && error.response.status === 404) {
           try {
             await axios.post(
@@ -51,25 +60,22 @@ export const IdTokenData = (props) => {
           } catch (postError) {
             console.error('Error al crear el usuario:', postError);
           }
-        } else {
-          console.error('Error verificando el usuario:', error);
         }
+      } finally {
+        setLoadingUser(false);
       }
     };
 
-    checkOrCreateUser();
-  }, [preferred_username, name, setUserId, setUserName]);
+    initializeUser();
+  }, [preferred_username, name, setUserId, setUserName, setLoadingUser]);
 
   const handleNicknameChange = (e) => {
     const value = e.target.value;
     setNickname(value);
     setNicknameSaved(false);
-
-    if (value.length < 3) {
-      setNicknameError('El Nickname debe tener al menos 3 caracteres');
-    } else {
-      setNicknameError('');
-    }
+    setNicknameError(
+      value.length < 3 ? 'El Nickname debe tener al menos 3 caracteres' : ''
+    );
   };
 
   const handleSaveNickname = async () => {
@@ -81,17 +87,11 @@ export const IdTokenData = (props) => {
     try {
       await axios.put(
         `http://localhost:8080/users/${preferred_username}`,
-        {
-          nickName: nickname,
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
+        { nickName: nickname },
+        { headers: { 'Content-Type': 'application/json' } }
       );
       setNicknameSaved(true);
-      setUserName(nickname); // Establecer `userName` en el contexto
+      setUserName(nickname);
     } catch (putError) {
       console.error('Error al actualizar el nickname:', putError);
     }
@@ -105,8 +105,15 @@ export const IdTokenData = (props) => {
     }
   };
 
+  const developers = [
+    { img: popeye, name: 'Popeye' },
+    { img: chili, name: 'Chili' },
+    { img: pablo, name: 'Pablo' },
+  ];
+
   return (
     <>
+      {/* Header */}
       <header className="table-header">
         <div className="header-logo">
           <img src={logo} alt="Logo" className="logo-header" />
@@ -116,38 +123,64 @@ export const IdTokenData = (props) => {
         </div>
       </header>
 
-      <div className="user-info-container">
-        <div className="user-card">
-          <h2>👤 Choose Your Nickname</h2>
-          <div className="user-details">
-            <p>
-              <strong>Name:</strong> {name}
-            </p>
-            <p>
-              <strong>Email:</strong> {preferred_username}
-            </p>
-            <p>
-              <strong>Nick:</strong>
-              <input
-                type="text"
-                value={nickname}
-                onChange={handleNicknameChange}
-                className="nickname-input"
-                disabled={nicknameSaved}
-              />
-            </p>
+      <div className="main-container1">
+        {/* Contenido principal */}
+        <div className="main-content2">
+          <div className="user-grid">
+            <h2>👤 Player Info</h2>
+            <div className="label">Name:</div>
+            <div className="value">{name}</div>
+            <div className="label">Email:</div>
+            <div className="value">{preferred_username}</div>
+            <div className="label">Saldo:</div>
+            <div className="value">${saldo.toFixed(2)}</div>
+            <input
+              type="text"
+              value={nickname}
+              onChange={handleNicknameChange}
+              className="nickname-input"
+              placeholder="Enter your nickname"
+              disabled={nicknameSaved}
+            />
             {nicknameError && <p className="error-message">{nicknameError}</p>}
-            {!nicknameSaved && (
-              <button onClick={handleSaveNickname} className="save-button" disabled={nickname.length < 3}>
-                Save
+            <div className="actions">
+              {!nicknameSaved && (
+                <button
+                  onClick={handleSaveNickname}
+                  className="save-button"
+                  disabled={nickname.length < 3}
+                >
+                  Save
+                </button>
+              )}
+              <button
+                onClick={handlePlayClick}
+                className="play-button"
+                disabled={!nicknameSaved}
+              >
+                Jugar
               </button>
-            )}
+            </div>
+            {errorMessage && <p className="error-message">{errorMessage}</p>}
           </div>
         </div>
-        {errorMessage && <p className="error-message">{errorMessage}</p>}
-        <button onClick={handlePlayClick} className="play-button" disabled={!nicknameSaved}>
-          Jugar
-        </button>
+
+        {/* Footer de desarrolladores */}
+        <div className="footer">
+          <div className="footer-left">
+            <h2>Squad el Patrón del Mal</h2>
+          </div>
+          <div className="footer-right">
+            <div className="developer-cards">
+              {developers.map((dev, index) => (
+                <div className="card" key={index}>
+                  <img src={dev.img} alt={dev.name} className="card-image" />
+                  <p className="card-name">{dev.name}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     </>
   );

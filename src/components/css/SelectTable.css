@@ -1,16 +1,37 @@
-/* Estilos generales */
-body {
-    background-color: #000000;
-    color: #c5a880;
-    margin: 0;
-    padding: 0;
-    min-height: 100vh;
+/* Variables de color para fácil mantenimiento */
+:root {
+    --background-color: #121212;
+    --primary-color: #ffffff;
+    --secondary-color: #b0bec5;
+    --accent-color: #ffab40;
+    --card-background: #1e1e1e;
+    --card-hover-background: #2c2c2c;
+    --button-background: transparent;
+    --button-border: #ffab40;
+    --button-hover-background: #ffab40;
+    --button-hover-color: #121212;
+    --shadow-color: rgba(0, 0, 0, 0.7);
+    --font-family: 'Roboto', sans-serif;
 }
 
-html {
+/* Estilos generales */
+body {
+    background: url('../img/fondo3.webp') no-repeat center center fixed;
+    background-size: cover;
+    background-color: #000; /* Color de respaldo */
+    color: var(--primary-color);
     margin: 0;
     padding: 0;
     min-height: 100vh;
+    font-family: var(--font-family);
+}
+
+body, html {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 /* Estilos para el header */
@@ -20,157 +41,269 @@ header.Options {
     justify-content: space-between;
     background-color: #000000;
     padding: 10px 20px;
-    border-bottom: 2px solid #333;
+    border-bottom: 1px solid #000000;
+    margin-bottom: 0; /* Elimina el espacio entre el header y el contenedor principal */
 }
 
 .logo .logo-header {
-    height: 80px;
+    height: 60px;
     margin-right: 20px;
 }
 
 .menu {
     display: flex;
-    gap: 20px;
+    gap: 15px;
 }
 
 .btn.menu-button {
-    flex: 1;
     border: none;
     padding: 10px 15px;
-    font-size: 18px;
-    text-align: center;
+    font-size: 16px;
     background-color: transparent;
-    color: #ccc;
+    color: var(--secondary-color);
     cursor: pointer;
     transition: color 0.3s ease;
-    font-family: 'Now-Medium', sans-serif;
     position: relative;
 }
 
-.btn.menu-button:hover {
-    color: #c5a880;
-}
-
+.btn.menu-button:hover,
 .btn.menu-button.active {
-    color: #fff;
-}
-
-.btn.menu-button.active::after,
-.btn.menu-button:hover::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: -5px;
-    width: 100%;
-    height: 2px;
-    background-color: #c5a880;
-    transition: width 0.3s ease;
+    color: var(--primary-color);
 }
 
 .btn.menu-button::after {
     content: '';
     position: absolute;
-    left: 0;
+    left: 50%;
     bottom: -5px;
     width: 0;
     height: 2px;
-    background-color: #c5a880;
-    transition: width 0.3s ease;
+    background-color: var(--accent-color);
+    transition: width 0.3s ease, left 0.3s ease;
+}
+
+.btn.menu-button:hover::after,
+.btn.menu-button.active::after {
+    width: 100%;
+    left: 0;
 }
 
 /* Contenedor principal */
 .main-content {
-    background: url('../img/fondo3.webp') no-repeat center center fixed;
-    background-size: cover;
+    margin-top: 0;
+    height: 100%;
     min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    padding-top: 0.1px;
+}
+
+
+.table-description {
+    font-size: 14px;
+    font-weight: normal;
+    color: #b0bec5; /* Color gris claro */
+    margin: 10px 0; /* Espacio superior e inferior */
+    text-align: left;
+    line-height: 1.5; /* Espaciado entre líneas para mejorar la legibilidad */
+}
+
+/* Estilos para el contenedor de selección de mesas */
+.select-table-container {
+    margin-top: 10;
+    width: 100%;
+    max-width: 1200px;
+    background-color: rgba(0, 0, 0, 0.7); /* Fondo semi-transparente */
+    color: #fff;
+    padding: 40px;
+    border-radius: 10px;
+    backdrop-filter: blur(5px); /* Efecto de desenfoque */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.select-table-container h2 {
+    font-size: 2em;
+    margin-bottom: 30px;
+    color: #c5a880; /* Color dorado */
+    text-align: center;
+    margin: 10;
+}
+
+/* Estructura del grid */
+.table-options {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    gap: 25px;
 }
 
-.select-table-container {
-    width: 90%;
-    max-width: 1200px;
-    min-height: 100vh;
-    background-color: #333333;
-    color: #c5a880;
-    padding: 100px 40px;
-    text-align: center;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-    margin: 0 auto;
-    border-radius: 10px;
-}
-
-/* Estilos para las opciones de mesa */
-.select-table-container .table-options {
+/* Tarjetas individuales */
+.table-card {
     display: flex;
-    flex-direction: column; /* Coloca los botones en una columna */
-    align-items: stretch;   /* Permite que los botones se estiren al 100% del ancho */
-    width: 100%;            /* Asegura que el contenedor de opciones ocupe todo el ancho */
-    margin-top: 20px;
+    flex-direction: column; /* Disposición en columna */
+    align-items: center; /* Centra el botón horizontalmente */
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
 }
-/* Estilos para los botones de mesa */
-.btn.table-button {
-    width: 100%;           /* Ocupa todo el ancho del contenedor */
-    max-width: none;        /* Elimina cualquier límite de ancho si existe */
-    height: 60px;
-    font-size: 1.2em;
-    background-color: #444;
+
+.table-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.6);
+}
+
+.table-card-left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid rgba(255, 255, 255, 0.1); /* Línea divisoria */
+    padding-right: 20px;
+}
+.player-count {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 14px;
+    font-weight: bold;
     color: #c5a880;
-    border: 2px solid #c5a880;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+.player-item {
+    display: flex; /* Para alinear el texto y el círculo */
+    align-items: center;
+    justify-content: space-between; /* Distribuye el espacio entre el texto y el círculo */
+    margin-bottom: 8px;
+    color: #c5a880;
+    font-size: 14px;
+}
+
+.player-status {
+    width: 10px; /* Tamaño del círculo */
+    height: 10px;
+    background-color: #4caf50; /* Color verde */
+    border-radius: 50%; /* Hace el elemento circular */
+    margin-left: 8px; /* Espacio entre el texto y el círculo */
+}
+
+
+.table-card-header {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #c5a880;
+    margin-bottom: 15px;
+}
+
+.table-card-content {
+    display: flex;
+    justify-content: space-between;
+    width: 100%; /* Ocupa el ancho completo del contenedor */
+    margin-bottom: 20px; /* Espacio debajo de los contenedores izquierdo y derecho */
+}
+
+/* Contenedor de jugadores */
+.players-container {
+    flex: 1;
+    margin-left: 20px; /* Espacio entre el lado izquierdo y derecho */
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 16px;
+    border-radius: 8px;
+    text-align: left;
+    position: relative; /* Para posicionar hijos absolutos */
+}
+.players-container .waiting-text {
+    position: absolute; /* Posiciona el texto en relación al contenedor */
+    bottom: 8px; /* Distancia desde la parte inferior */
+    right: 8px; /* Distancia desde el borde derecho */
+    font-size: 14px;
+    font-weight: bold;
+    color: #4caf50; /* Color verde */
+}
+
+.waiting-text {
+    position: absolute; /* Posiciona el texto en relación a .table-card */
+    bottom: 8px;        /* Distancia desde la parte inferior */
+    right: 8px;         /* Distancia desde el borde derecho */
+    font-size: 14px;
+    font-weight: bold;
+    color: #4caf50;     /* Color verde */
+}
+
+.players-container h3 {
+    margin-bottom: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #c5a880;
+}
+
+.players-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+
+
+.players-list li {
+    margin-bottom: 8px;
+    color: #c5a880;
+    font-size: 14px;
+}
+
+/* Botón "Unirse" */
+.btn.join-button {
+    padding: 10px 30px;
+    font-size: 1em;
+    background-color: #c5a880;
+    color: #000;
+    border: none;
+    border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    margin-bottom: 15px;    /* Espacio entre los botones */
-    box-sizing: border-box; /* Asegura que el borde se incluya en el ancho */
-}
-.btn.table-button:hover {
-    background-color: #c5a880;
-    color: #333333;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-top: 10px; /* Espacio superior opcional */
+    align-self: center; /* Asegura que el botón esté centrado */
 }
 
-.btn.table-button.selected {
-    background-color: #c5a880;
-    color: #333333;
+.btn.join-button:hover {
+    background-color: #ffd700;
+    transform: translateY(-2px);
 }
 
-/* Estilos para el botón de volver */
+/* Botón de volver */
 .btn.back-button {
-    margin-top: 20px;
-    margin-bottom: 20px;
+    margin-top: 60px;
+    padding: 10px 30px;
+    font-size: 1em;
     background-color: transparent;
     color: #c5a880;
     border: 2px solid #c5a880;
-    padding: 10px 20px;
-    font-size: 1em;
+    border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .btn.back-button:hover {
     background-color: #c5a880;
-    color: #333333;
+    color: #000;
 }
 
-/* Mensaje de mesa seleccionada */
-.select-table-container .selected-table-message {
-    margin-top: 20px;
-    color: #fff;
-    font-size: 1.2em;
-}
+/* Responsividad */
+@media (max-width: 768px) {
+    .table-card {
+        flex-direction: column;
+    }
 
-/* Botón para ir a la mesa */
-.btn.go-to-table-button {
-    margin-top: 10px;
-    background-color: transparent;
-    color: #c5a880;
-    border: 2px solid #c5a880;
-    padding: 10px 20px;
-    font-size: 1em;
-    cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
+    .table-card-left {
+        border-right: none;
+        padding-right: 0;
+        margin-bottom: 20px;
+    }
 
-.btn.go-to-table-button:hover {
-    background-color: #c5a880;
-    color: #333333;
+    .players-container {
+        margin-left: 0;
+    }
 }
