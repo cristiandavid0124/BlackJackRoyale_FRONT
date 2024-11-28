@@ -106,9 +106,10 @@ export const IdTokenData = (props) => {
   };
 
   const developers = [
-    { img: popeye, name: 'Popeye' },
-    { img: chili, name: 'Chili' },
-    { img: pablo, name: 'Pablo' },
+    { img: popeye, name: 'Diego "Popeye"' },
+    { img: pablo, name: 'Daniel "Pablito"' },
+    { img: chili, name: 'Cristian "Chili"' }
+    ,
   ];
 
   return (

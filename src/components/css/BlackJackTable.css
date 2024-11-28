@@ -18,7 +18,10 @@
   z-index: 2000; /* Asegúrate de que esté sobre otros elementos */
   text-align: center; /* Centra el contenido del texto */
   font-family: 'Now-Medium', sans-serif;
+  color: black; /* Cambia el color del texto a negro */
 }
+
+
 
 .decision-prompt button {
   margin: 10px; /* Espaciado entre botones */

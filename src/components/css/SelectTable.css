@@ -273,9 +273,15 @@ header.Options {
     transform: translateY(-2px);
 }
 
+.btn.back-button-container {
+    display: flex; /* Habilita flexbox para centrar el contenido */
+    justify-content: center; /* Centra horizontalmente */
+    align-items: center; /* Centra verticalmente */
+    margin-top: 60px; /* Ajusta el margen superior si es necesario */
+}
+
 /* Botón de volver */
 .btn.back-button {
-    margin-top: 60px;
     padding: 10px 30px;
     font-size: 1em;
     background-color: transparent;

@@ -16,6 +16,7 @@ import signout from './img/previous.png';
 import { useUser } from './UserContext';
 import { useSocket } from './SocketContext';
 
+
 const getBitmapImage = (suit, rank) => {
   const suitToBitmapStartIndex = {
     Clubs: 1,
@@ -47,6 +48,8 @@ const getBitmapImage = (suit, rank) => {
     return Bitmap53;
   }
 
+
+
   const bitmapIndex = baseIndex + rankIndex - 1;
   try {
     return require(`./img/Bitmap${bitmapIndex}.png`);
@@ -71,6 +74,9 @@ const BlackjackTable = () => {
   const [userCards, setUserCards] = useState([Bitmap53, Bitmap53]);
   const [isGameFinished, setIsGameFinished] = useState(false);
   const [showDecisionPrompt, setShowDecisionPrompt] = useState(false);
+  const [animatingCards, setAnimatingCards] = useState([]);
+  const [gameStatus, setGameStatus] = useState(null);
+
 
   const { socket, initializeSocket, isSocketReady } = useSocket();
 
@@ -116,6 +122,7 @@ const BlackjackTable = () => {
         console.log(`[DEBUG] Recibido 'roomUpdate':`, data);
         setGameState(data);
         actualizarEstadoJuego(data);
+        setGameStatus(data.status); 
 
         const playerData = data.players.find((player) => player.nickName === userName);
         if (playerData) {
@@ -173,7 +180,29 @@ const BlackjackTable = () => {
     }
   };
 
+  const animarCartas = (players) => {
+    const animations = [];
+    players.forEach((player, playerIndex) => {
+      player.hand.forEach((card, cardIndex) => {
+        animations.push({
+          player: playerIndex + 1,
+          cardIndex,
+          card: getBitmapImage(card.suit, card.rank),
+        });
+      });
+    });
+    setAnimatingCards(animations);
+
+    setTimeout(() => {
+      setAnimatingCards([]); // Limpia las animaciones tras mostrarlas
+    }, 2000);
+  };
+
   const seleccionarFicha = (color, valor) => {
+    if (gameStatus !== 'EN_APUESTAS') {
+      toast.warn('No puedes seleccionar fichas en este momento. Espera a que empiece la ronda de apuestas.');
+      return;
+    }
     if (saldo < valor) {
       toast.error('Saldo insuficiente para esta ficha');
       return;
@@ -184,6 +213,10 @@ const BlackjackTable = () => {
   };
 
   const apostar = () => {
+    if (gameStatus !== 'EN_APUESTAS') {
+      toast.warn('No puedes apostar en este momento. Espera a que empiece la ronda de apuestas.');
+      return;
+    }
     if (socket && roomId) {
       const fichasNormalizadas = fichasSeleccionadas.map((color) => color.toUpperCase());
       socket.emit('playerBet', { fichas: fichasNormalizadas, roomId });
@@ -193,8 +226,16 @@ const BlackjackTable = () => {
       toast.success('Apuesta realizada con éxito');
     }
   };
+  
 
   const playerAction = (actionType) => {
+    const currentPlayer = gameState?.players.find((player) => player.nickName === userName);
+  
+    if (!currentPlayer?.inTurn) {
+      toast.warn('No puedes realizar esta acción porque no es tu turno.');
+      return;
+    }
+  
     if (socket && roomId) {
       socket.emit('playerAction', { type: actionType, roomId });
       toast.info(`Acción enviada: ${actionType.toUpperCase()}`);

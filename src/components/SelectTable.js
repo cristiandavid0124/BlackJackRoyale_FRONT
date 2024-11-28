@@ -152,9 +152,11 @@ const SelectTable = () => {
               </div>
             ))}
           </div>
+          <div class="btn back-button-container">
           <button onClick={handleGoBack} className="btn back-button">
             Volver
           </button>
+          </div>
         </div>
       </div>
     </>
