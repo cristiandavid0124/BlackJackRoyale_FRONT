@@ -155,6 +155,23 @@ font-size: 0.8em;
   
 }
 
+
+.dialog-repartiendo {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  font-family: 'Now-Medium', sans-serif;
+  font-size: 1.5rem;
+  z-index: 2000;
+  text-align: center;
+}
+
+
 .sign-out-button {
   background: none;
   border: none;

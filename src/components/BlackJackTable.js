@@ -11,7 +11,8 @@ import negra from './img/negra.png';
 import mesa from './img/mesa.png';
 import logo from './img/logo.PNG';
 import Bitmap53 from './img/Bitmap57.png'; // Carta por defecto
-import luigiCasino from './img/luigicasino.gif';
+import luigiCasino from './img/luigicasino.gif'; // GIF de Luigi animado
+import luigiquieto from './img/luigiquieto.png'; // Imagen estática de Luigi
 import signout from './img/previous.png';
 import { useUser } from './UserContext';
 import { useSocket } from './SocketContext';
@@ -76,6 +77,10 @@ const BlackjackTable = () => {
   const [showDecisionPrompt, setShowDecisionPrompt] = useState(false);
   const [animatingCards, setAnimatingCards] = useState([]);
   const [gameStatus, setGameStatus] = useState(null);
+  const [isDealing, setIsDealing] = useState(false); // Controla si Luigi está repartiendo
+  const [luigiState, setLuigiState] = useState('static'); // Puede ser 'static' o 'animated'
+  const [hasDealtCards, setHasDealtCards] = useState(false); // Verifica si ya se repartieron las cartas
+
 
 
   const { socket, initializeSocket, isSocketReady } = useSocket();
@@ -160,7 +165,6 @@ const BlackjackTable = () => {
       };
     }
   }, [userId, userName, roomId, initializeSocket, isSocketReady, navigate]);
-
   const actualizarEstadoJuego = (gameState) => {
     if (gameState && gameState.players) {
       const updatedPlayerInfo = {};
@@ -168,35 +172,54 @@ const BlackjackTable = () => {
         updatedPlayerInfo[index + 1] = {
           name: player.nickName || 'Cargando...',
           bet: player.bet || 0,
-          hand: player.hand || [],
+          hand: player.hand || [], // Cartas en mano
           chips: player.chips || [],
         };
       });
-
+  
       updatedPlayerInfo[6] = { hand: gameState.dealerHand || [] };
       setPlayerInfo(updatedPlayerInfo);
-    } else {
-      console.warn('gameState o gameState.players no disponible o vacío');
+  
+      const hasCards = gameState.players.some((player) => player.hand.length > 0);
+      const allHandsEmpty = gameState.players.every((player) => player.hand.length === 0);
+  
+      if (hasCards && !hasDealtCards && !isDealing) {
+        console.log("Detectando cartas por primera vez, iniciando reparto...");
+        setHasDealtCards(true);
+        repartirCartas();
+      } else if (allHandsEmpty && hasDealtCards) {
+        console.log("Manos vacías detectadas, reiniciando bandera.");
+        setHasDealtCards(false);
+      }
     }
   };
+  
 
-  const animarCartas = (players) => {
-    const animations = [];
-    players.forEach((player, playerIndex) => {
-      player.hand.forEach((card, cardIndex) => {
-        animations.push({
-          player: playerIndex + 1,
-          cardIndex,
-          card: getBitmapImage(card.suit, card.rank),
-        });
-      });
-    });
-    setAnimatingCards(animations);
 
+  const repartirCartas = () => {
+    if (isDealing) {
+      console.log("Luigi ya está repartiendo, evitando múltiples ejecuciones.");
+      return;
+    }
+  
+    console.log("Luigi comienza a repartir cartas...");
+    setIsDealing(true); // Marca que Luigi está en proceso de reparto
+    setLuigiState('animated'); // Cambia Luigi a modo animado
+  
     setTimeout(() => {
-      setAnimatingCards([]); // Limpia las animaciones tras mostrarlas
-    }, 2000);
+      toast.info('Repartiendo cartas...');
+  
+      setTimeout(() => {
+        console.log("Reparto de cartas completado, Luigi vuelve a estar estático.");
+        setLuigiState('static');
+        setIsDealing(false); // Marca que Luigi ha terminado de repartir
+      }, 2000); // Tiempo para completar el reparto visual
+    }, 6000); // Tiempo de animación inicial
   };
+  
+  
+
+  
 
   const seleccionarFicha = (color, valor) => {
     if (gameStatus !== 'EN_APUESTAS') {
@@ -363,7 +386,11 @@ const BlackjackTable = () => {
 
         <div className="right-column">
           <div className="mesa-container">
-            <img src={luigiCasino} alt="Dealer GIF" className="luigi-gif" />
+          <img
+              src={luigiState === 'static' ? luigiquieto : luigiCasino}
+              alt="Luigi"
+              className="luigi-gif"
+            />
             <img src={mesa} alt="mesa" className="mesa" />
 
             {[1, 2, 3, 4, 5, 6].map((player) => (
