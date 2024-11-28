@@ -65,7 +65,10 @@ header.Options {
     transition: color 0.3s ease;
     position: relative;
 }
-
+.player-info1 p {
+    margin-bottom: 10px; /* Ajusta el valor según lo que necesites */
+  }
+  
 .btn.menu-button:hover,
 .btn.menu-button.active {
     color: var(--primary-color);
