@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react'; // Asegúrate de incluir useRef aquí
+
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -16,6 +17,8 @@ import luigiquieto from './img/luigiquieto.png'; // Imagen estática de Luigi
 import signout from './img/previous.png';
 import { useUser } from './UserContext';
 import { useSocket } from './SocketContext';
+// Controla si las cartas se muestran en el tablero
+
 
 
 const getBitmapImage = (suit, rank) => {
@@ -79,7 +82,11 @@ const BlackjackTable = () => {
   const [gameStatus, setGameStatus] = useState(null);
   const [isDealing, setIsDealing] = useState(false); // Controla si Luigi está repartiendo
   const [luigiState, setLuigiState] = useState('static'); // Puede ser 'static' o 'animated'
-  const [hasDealtCards, setHasDealtCards] = useState(false); // Verifica si ya se repartieron las cartas
+  const hasDealtCardsRef = useRef(false); // Referencia para controlar el estado de las cartas
+  const showCardsRef = useRef(false); // Maneja si las cartas deben mostrarse
+  const luigiAnimationFinishedRef = useRef(false); // Verifica si la animación de Luigi ha terminado
+  const [showDealingDialog, setShowDealingDialog] = useState(false); // Nuevo estado para el diálogo
+
 
 
 
@@ -125,9 +132,9 @@ const BlackjackTable = () => {
 
       const handleRoomUpdate = (data) => {
         console.log(`[DEBUG] Recibido 'roomUpdate':`, data);
-        setGameState(data);
-        actualizarEstadoJuego(data);
-        setGameStatus(data.status); 
+        setGameState(data); // Actualiza el estado global del juego
+        setGameStatus(data.status); // Sincroniza el estado del juego
+        actualizarEstadoJuego(data); // Procesa los datos recibidos (incluyendo lógica de Luigi)
 
         const playerData = data.players.find((player) => player.nickName === userName);
         if (playerData) {
@@ -138,21 +145,21 @@ const BlackjackTable = () => {
           );
           setUltimoPremio(playerData.lastPrize || ultimoPremio);
 
-          if (playerData.inTurn) {
+          if (playerData.inTurn && luigiAnimationFinishedRef.current) {
             toast.info('¡Es tu turno!');
           }
-        } else {
-          console.warn(`No se encontró al jugador con nickName "${userName}".`);
         }
 
         if (data.winners?.length) {
           toast.success(`Ganadores: ${data.winners.join(', ')}`);
-
           setTimeout(() => {
             if (activeSocket && roomId) {
               activeSocket.emit('restartGame', { roomId });
             }
             setShowDecisionPrompt(true);
+            hasDealtCardsRef.current = false; // Permite que Luigi reparta cartas nuevamente
+            setIsDealing(false); // Asegúrate de que no haya reparto en curso
+            setLuigiState('static'); // Regresa a Luigi a estado estático
           }, 10000);
         }
       };
@@ -165,57 +172,89 @@ const BlackjackTable = () => {
       };
     }
   }, [userId, userName, roomId, initializeSocket, isSocketReady, navigate]);
+  
   const actualizarEstadoJuego = (gameState) => {
-    if (gameState && gameState.players) {
-      const updatedPlayerInfo = {};
-      gameState.players.forEach((player, index) => {
-        updatedPlayerInfo[index + 1] = {
-          name: player.nickName || 'Cargando...',
-          bet: player.bet || 0,
-          hand: player.hand || [], // Cartas en mano
-          chips: player.chips || [],
-        };
-      });
+    if (!gameState) return;
   
-      updatedPlayerInfo[6] = { hand: gameState.dealerHand || [] };
-      setPlayerInfo(updatedPlayerInfo);
+    const { status } = gameState;
   
-      const hasCards = gameState.players.some((player) => player.hand.length > 0);
-      const allHandsEmpty = gameState.players.every((player) => player.hand.length === 0);
+    const updatedPlayerInfo = {};
+    gameState.players.forEach((player, index) => {
+      updatedPlayerInfo[index + 1] = {
+        name: player.nickName || 'Cargando...',
+        bet: player.bet || 0,
+        chips: player.chips || [],
+        hand: showCardsRef.current ? player.hand || [] : [], // Oculta las cartas mientras Luigi reparte
+      };
+    });
   
-      if (hasCards && !hasDealtCards && !isDealing) {
-        console.log("Detectando cartas por primera vez, iniciando reparto...");
-        setHasDealtCards(true);
-        repartirCartas();
-      } else if (allHandsEmpty && hasDealtCards) {
-        console.log("Manos vacías detectadas, reiniciando bandera.");
-        setHasDealtCards(false);
-      }
+    updatedPlayerInfo[6] = {
+      hand: showCardsRef.current ? gameState.dealerHand || [] : [],
+    };
+  
+    setPlayerInfo(updatedPlayerInfo);
+  
+    if (status === 'EN_JUEGO' && !hasDealtCardsRef.current) {
+      console.log('Estado EN_JUEGO detectado. Iniciando animación de reparto...');
+      setLuigiState('animated');
+      hasDealtCardsRef.current = true;
+      showCardsRef.current = false;
+      luigiAnimationFinishedRef.current = false;
+      setShowDealingDialog(true);
+  
+      setTimeout(() => {
+        console.log('Reparto completado. Actualizando cartas...');
+        setLuigiState('static');
+        showCardsRef.current = true;
+        luigiAnimationFinishedRef.current = true;
+        setShowDealingDialog(false);
+  
+        const updatedCardsInfo = { ...updatedPlayerInfo };
+        gameState.players.forEach((player, index) => {
+          updatedCardsInfo[index + 1].hand = player.hand || [];
+        });
+        updatedCardsInfo[6].hand = gameState.dealerHand || [];
+        setPlayerInfo(updatedCardsInfo);
+      }, 4000);
     }
   };
   
+  
+  
 
-
+  const renderDealingDialog = () => {
+    if (showDealingDialog) {
+      return (
+        <div className="dealing-dialog">
+          <p>Luigi está repartiendo...</p>
+        </div>
+      );
+    }
+    return null;
+  };
   const repartirCartas = () => {
-    if (isDealing) {
-      console.log("Luigi ya está repartiendo, evitando múltiples ejecuciones.");
+    if (isDealing || hasDealtCardsRef.current) {
+      console.log("Luigi ya repartió o está repartiendo cartas. No se ejecuta de nuevo.");
       return;
     }
-  
-    console.log("Luigi comienza a repartir cartas...");
-    setIsDealing(true); // Marca que Luigi está en proceso de reparto
-    setLuigiState('animated'); // Cambia Luigi a modo animado
-  
+
+    toast.info('¡Luigi está repartiendo las Cartas!');
+
+    setIsDealing(true);
+    hasDealtCardsRef.current = true; // Bloquea futuros repartos inmediatamente
+
+    setLuigiState('animated'); // Luigi animado
+
     setTimeout(() => {
       toast.info('Repartiendo cartas...');
-  
       setTimeout(() => {
         console.log("Reparto de cartas completado, Luigi vuelve a estar estático.");
         setLuigiState('static');
-        setIsDealing(false); // Marca que Luigi ha terminado de repartir
-      }, 2000); // Tiempo para completar el reparto visual
-    }, 6000); // Tiempo de animación inicial
+        setIsDealing(false);
+      }, 2000); // Duración de la animación
+    }, 6000); // Tiempo inicial de espera antes de repartir
   };
+
   
   
 
@@ -308,6 +347,7 @@ const BlackjackTable = () => {
     <div className="table-container">
       <ToastContainer />
       {renderDecisionPrompt()}
+      {renderDealingDialog()} 
       <header className="table-header">
         <div className="header-logo">
           <img src={logo} alt="Logo" className="logo-header" />
@@ -402,19 +442,19 @@ const BlackjackTable = () => {
                     </div>
 
                     <div className="player-cards">
-                      {playerInfo[player].hand.map((card, index) => {
-                        const cardImage = getBitmapImage(card.suit, card.rank);
-                        return (
-                          <img
-                            key={index}
-                            src={cardImage}
-                            alt={`${card.rank} of ${card.suit}`}
-                            className="player-card"
-                          />
-                        );
-                      })}
+                      {showCardsRef.current &&
+                        playerInfo[player]?.hand.map((card, index) => {
+                          const cardImage = getBitmapImage(card.suit, card.rank);
+                          return (
+                            <img
+                              key={index}
+                              src={cardImage}
+                              alt={`${card.rank} of ${card.suit}`}
+                              className="player-card"
+                            />
+                          );
+                        })}
                     </div>
-
                     <div className="player-info1">
                 <p>
                     👤{' '}
