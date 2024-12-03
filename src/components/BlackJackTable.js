@@ -17,6 +17,8 @@ import luigiquieto from './img/luigiquieto.png'; // Imagen estática de Luigi
 import signout from './img/previous.png';
 import { useUser } from './UserContext';
 import { useSocket } from './SocketContext';
+import ChatBox from './ChatBox';
+
 // Controla si las cartas se muestran en el tablero
 
 
@@ -76,9 +78,7 @@ const BlackjackTable = () => {
   const [fichasSeleccionadas, setFichasSeleccionadas] = useState([]);
   const [playerInfo, setPlayerInfo] = useState({});
   const [userCards, setUserCards] = useState([Bitmap53, Bitmap53]);
-  const [isGameFinished, setIsGameFinished] = useState(false);
   const [showDecisionPrompt, setShowDecisionPrompt] = useState(false);
-  const [animatingCards, setAnimatingCards] = useState([]);
   const [gameStatus, setGameStatus] = useState(null);
   const [isDealing, setIsDealing] = useState(false); // Controla si Luigi está repartiendo
   const [luigiState, setLuigiState] = useState('static'); // Puede ser 'static' o 'animated'
@@ -86,6 +86,9 @@ const BlackjackTable = () => {
   const showCardsRef = useRef(false); // Maneja si las cartas deben mostrarse
   const luigiAnimationFinishedRef = useRef(false); // Verifica si la animación de Luigi ha terminado
   const [showDealingDialog, setShowDealingDialog] = useState(false); // Nuevo estado para el diálogo
+  const [isChatOpen, setIsChatOpen] = useState(false); // Estado para controlar la visibilidad del chat
+  const [messages, setMessages] = useState([]); // Mueve el estado de mensajes al componente padre
+  const enApuestasToastShownRef = useRef(false);
 
 
 
@@ -136,6 +139,14 @@ const BlackjackTable = () => {
         setGameStatus(data.status); // Sincroniza el estado del juego
         actualizarEstadoJuego(data); // Procesa los datos recibidos (incluyendo lógica de Luigi)
 
+        // Verifica si el estado es EN_APUESTAS y el mensaje no ha sido mostrado antes
+        if (data.status === 'EN_APUESTAS' && !enApuestasToastShownRef.current) {
+          const allPlayersBet = data.players.every((player) => player.bet > 0);
+          if (!allPlayersBet) {
+            toast.info('El juego iniciará cuando todos los jugadores en la sala apuesten.');
+            enApuestasToastShownRef.current = true; // Marca que ya se mostró el mensaje
+          }
+        }
         const playerData = data.players.find((player) => player.nickName === userName);
         if (playerData) {
           setSaldo(playerData.amount);
@@ -158,6 +169,8 @@ const BlackjackTable = () => {
             }
             setShowDecisionPrompt(true);
             hasDealtCardsRef.current = false; // Permite que Luigi reparta cartas nuevamente
+            enApuestasToastShownRef.current = false; // Resetea para una nueva ronda
+
             setIsDealing(false); // Asegúrate de que no haya reparto en curso
             setLuigiState('static'); // Regresa a Luigi a estado estático
           }, 10000);
@@ -316,6 +329,10 @@ const BlackjackTable = () => {
     }
   };
 
+  const handleNewMessage = (newMessage) => {
+    setMessages((prevMessages) => [...prevMessages, newMessage]);
+  };
+
   const renderDecisionPrompt = () => {
     if (showDecisionPrompt) {
       return (
@@ -388,37 +405,29 @@ const BlackjackTable = () => {
           </div>
 
           <div className="fichas">
-            <img
-              src={azul}
-              alt="Ficha azul"
-              className="ficha"
-              onClick={() => seleccionarFicha('AZUL', valoresFichas.AZUL)}
-            />
-            <img
-              src={amarillo}
-              alt="Ficha amarilla"
-              className="ficha"
-              onClick={() => seleccionarFicha('AMARILLO', valoresFichas.AMARILLO)}
-            />
-            <img
-              src={verde}
-              alt="Ficha verde"
-              className="ficha"
-              onClick={() => seleccionarFicha('VERDE', valoresFichas.VERDE)}
-            />
-            <img
-              src={roja}
-              alt="Ficha roja"
-              className="ficha"
-              onClick={() => seleccionarFicha('ROJO', valoresFichas.ROJO)}
-            />
-            <img
-              src={negra}
-              alt="Ficha negra"
-              className="ficha"
-              onClick={() => seleccionarFicha('NEGRO', valoresFichas.NEGRO)}
-            />
-          </div>
+          {Object.entries(valoresFichas)
+            .sort(([, valorA], [, valorB]) => valorA - valorB) // Ordena de menor a mayor
+            .map(([color, valor]) => (
+              <div
+                key={color}
+                className="ficha-container"
+                onClick={() => seleccionarFicha(color, valor)}
+              >
+                <img
+                  src={{
+                    AZUL: azul,
+                    AMARILLO: amarillo,
+                    VERDE: verde,
+                    ROJO: roja,
+                    NEGRO: negra,
+                  }[color]}
+                  alt={`Ficha ${color}`}
+                  className="ficha"
+                />
+                <span className="ficha-valor">${valor}</span>
+              </div>
+            ))}
+        </div>
           <button className="boton-apostar" onClick={apostar}>
             Apostar
           </button>
@@ -469,6 +478,22 @@ const BlackjackTable = () => {
             ))}
           </div>
         </div>
+        <div className={`chat-container ${isChatOpen ? 'open' : 'closed'}`}>
+      {isChatOpen ? (
+        <ChatBox
+          socket={socket}
+          roomId={roomId}
+          userName={userName}
+          messages={messages} // Pasamos los mensajes actuales
+          onNewMessage={handleNewMessage} // Pasamos un callback para manejar nuevos mensajes
+          onMinimize={() => setIsChatOpen(false)} // Controla la minimización
+        />
+      ) : (
+        <button className="chat-toggle-button" onClick={() => setIsChatOpen(true)}>
+          💬
+        </button>
+      )}
+    </div>
       </div>
     </div>
   );
