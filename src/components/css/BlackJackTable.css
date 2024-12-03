@@ -285,3 +285,64 @@ font-weight: 700;
   left: 40%;
 }
 
+.chat-box {
+  margin-top: 80px;
+  border: 1px solid #044722; /* Borde verde oscuro */
+  background: #066235; /* Fondo verde oscuro */
+  padding: 10px;
+  border-radius: 10px; /* Bordes redondeados */
+  max-height: 200px; /* Limitar la altura total del chat */
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-messages {
+  flex: 1;
+  height: 100px; /* Altura fija para mostrar solo 3 mensajes */
+  overflow-y: auto; /* Permitir desplazamiento vertical */
+  margin-bottom: 10px;
+  background-color: #044722; /* Fondo verde más oscuro */
+  border-radius: 5px; /* Bordes redondeados */
+  padding: 5px;
+}
+
+.chat-message {
+  margin-bottom: 5px;
+  padding: 5px;
+  border-bottom: 1px solid #066235; /* Línea divisoria verde */
+  color: #ffffff; /* Texto blanco */
+  font-family: 'Now-Medium', sans-serif; /* Fuente consistente */
+}
+
+.chat-message strong {
+  color: #FFD700; /* Color amarillo para los nombres de los jugadores */
+}
+
+.chat-input {
+  display: flex;
+  gap: 5px;
+}
+
+.chat-input input {
+  flex: 1;
+  padding: 5px;
+  border: 1px solid #044722; /* Borde verde oscuro */
+  border-radius: 5px; /* Bordes redondeados */
+  background-color: #044722; /* Fondo verde oscuro */
+  color: #ffffff; /* Texto blanco */
+  font-family: 'Now-Medium', sans-serif;
+}
+
+.chat-input button {
+  padding: 5px 10px;
+  background-color: #044722; /* Botón verde oscuro */
+  color: #ffffff; /* Texto blanco */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-family: 'Now-Medium', sans-serif;
+}
+
+.chat-input button:hover {
+  background-color: #066235; /* Cambia el color al pasar el mouse */
+}

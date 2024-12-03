@@ -15,6 +15,7 @@ import Bitmap53 from './img/Bitmap57.png'; // Carta por defecto
 import luigiCasino from './img/luigicasino.gif';
 import signout from './img/previous.png';
 import { useUser } from './UserContext';
+import ChatBox from "./ChatBox"; 
 
 // Función para obtener la imagen de bitmap correspondiente a la carta
 const getBitmapImage = (suit, rank) => {
@@ -277,6 +278,7 @@ const BlackjackTable = () => {
             <img src={negra} alt="Ficha negra" className="ficha" onClick={() => seleccionarFicha('NEGRO', valoresFichas.NEGRO)} />
           </div>
           <button className="boton-apostar" onClick={apostar}>Apostar</button>
+          <ChatBox socket={socketRef.current} roomId={roomId} userName={userName} />
         </div>
 
         <div className="right-column">
