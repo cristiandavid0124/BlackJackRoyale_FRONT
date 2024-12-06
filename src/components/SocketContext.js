@@ -28,9 +28,10 @@ export const SocketProvider = ({ children }) => {
     if (userId && userName) {
       console.log('Inicializando conexión de socket con:', { userId, userName });
 
-      const newSocket = io('http://localhost:9092', {
+      const newSocket = io('https://blackjackroyalebackend-djfwh2cbbqb5ebdq.canadacentral-01.azurewebsites.net', {
+        path: '/socket.io',
         query: { id: userId, name: userName },
-        transports: ['websocket'],
+        transports: ['websocket'], 
         reconnection: true,
         reconnectionAttempts: Infinity,
         reconnectionDelay: 1000,

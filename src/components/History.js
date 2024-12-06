@@ -76,7 +76,7 @@ const History = () => {
       }
       try {
         const response = await fetch(
-          `http://localhost:8080/users/${encodeURIComponent(userId)}`
+          `https://blackjackroyalebackend-djfwh2cbbqb5ebdq.canadacentral-01.azurewebsites.net/api/users/${encodeURIComponent(userId)}`
         );
         if (!response.ok) {
           throw new Error(`Error al obtener el historial. Código: ${response.status}`);

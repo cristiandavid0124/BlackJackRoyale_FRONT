@@ -51,7 +51,7 @@ const SelectTable = () => {
         }
 
         // Obtiene las salas del backend como respaldo
-        const response = await axios.get('http://localhost:8080/api/rooms');
+        const response = await axios.get('https://blackjackroyalebackend-djfwh2cbbqb5ebdq.canadacentral-01.azurewebsites.net/api/rooms');
         console.log('Salas obtenidas del backend:', response.data);
         setTables(response.data);
       } catch (err) {

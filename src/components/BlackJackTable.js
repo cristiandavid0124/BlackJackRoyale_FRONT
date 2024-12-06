@@ -197,7 +197,7 @@ const BlackjackTable = () => {
         name: player.nickName || 'Cargando...',
         bet: player.bet || 0,
         chips: player.chips || [],
-        hand: showCardsRef.current ? player.hand || [] : [], // Oculta las cartas mientras Luigi reparte
+        hand: showCardsRef.current ? player.hand || [] : [], 
       };
     });
   

@@ -2,15 +2,15 @@ import { LogLevel } from '@azure/msal-browser';
 
 export const msalConfig = {
     auth: {
-        clientId: '066fef70-45bd-422a-a870-149ae2f088f4', // This is the ONLY mandatory field that you need to supply.
-        authority: 'https://login.microsoftonline.com/common/v2.0', // Replace the placeholder with your tenant subdomain 
-        redirectUri: 'http://localhost:3000/BlackJackRoyale', // Points to window.location.origin. You must register this URI on Microsoft Entra admin center/App Registration.
-        postLogoutRedirectUri: '/BlackJackRoyale', // Indicates the page to navigate after logout.
-        navigateToLoginRequestUrl: false, // If "true", will navigate back to the original request location before processing the auth code response.
+        clientId: '066fef70-45bd-422a-a870-149ae2f088f4', // ID de la aplicación registrada en Azure AD.
+        authority: 'https://login.microsoftonline.com/common/v2.0', // Autoridad de Azure para autenticación.
+        redirectUri: 'https://blackjackroyaleapp-f6hagcdvc5bbejb0.canadacentral-01.azurewebsites.net/BlackJackRoyale', // Nueva URL de redirección.
+        postLogoutRedirectUri: 'https://blackjackroyaleapp-f6hagcdvc5bbejb0.canadacentral-01.azurewebsites.net/BlackJackRoyale', // Página a la que redirigir tras el logout.
+        navigateToLoginRequestUrl: false, // Si "true", navega de vuelta al lugar original tras login.
     },
     cache: {
-        cacheLocation: 'sessionStorage', // Configures cache location. "sessionStorage" is more secure, but "localStorage" gives you SSO between tabs.
-        storeAuthStateInCookie: false, // Set this to "true" if you are having issues on IE11 or Edge
+        cacheLocation: 'sessionStorage', // "sessionStorage" para mayor seguridad; "localStorage" permite SSO entre pestañas.
+        storeAuthStateInCookie: false, // Activar solo si hay problemas en navegadores antiguos (como IE11).
     },
     system: {
         loggerOptions: {
@@ -40,5 +40,6 @@ export const msalConfig = {
 };
 
 export const loginRequest = {
-    scopes: [],
+    scopes: [], // Define los scopes requeridos para acceder a las APIs protegidas.
 };
+
