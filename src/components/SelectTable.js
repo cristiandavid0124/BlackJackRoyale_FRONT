@@ -113,7 +113,7 @@ const SelectTable = () => {
       <Header activeButton={activeButton} onNavigate={setActiveButton} />
       <div className="main-content">
         <div className="select-table-container">
-          <h2>Selecciona una Mesa</h2>
+          <h2>Selecciona una Mesa PROBANDO</h2>
           <div className="table-options">
             {tables.map((table) => (
               <div key={table.roomId} className="table-card">
