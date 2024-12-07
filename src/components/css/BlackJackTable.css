@@ -13,7 +13,7 @@
   transform: translate(-50%, -50%); /* Ajusta la posición para centrar */
   background-color: white; /* Fondo blanco */
   border-radius: 10px; /* Bordes redondeados */
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); /* Sombra */
+  box-shadow: 0px 4px 10px rgba(19, 8, 8, 0.5); /* Sombra */
   padding: 20px; /* Espaciado interno */
   z-index: 2000; /* Asegúrate de que esté sobre otros elementos */
   text-align: center; /* Centra el contenido del texto */
@@ -91,14 +91,12 @@
 }
 
 .left-column {
-  position: relative;
-  flex: 3;
+  flex: 3; /* 30% del ancho */
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 20px;
 }
-
 
 .right-column {
   flex: 7; /* 70% del ancho */
@@ -122,23 +120,16 @@
 }
 
 .fichas {
-  position: absolute; /* Esto es correcto si quieres que las fichas estén en una posición fija */
-  bottom: 20px; /* Ajusta la distancia del borde inferior */
-  left: 20px; /* Mueve las fichas hacia la esquina inferior izquierda */
   display: flex;
-  flex-direction: column; /* Asegura que las fichas se organicen en columna */
-  align-items: center; /* Centra las fichas horizontalmente en su contenedor */
-  gap: 10px; /* Espaciado entre las fichas */
-  z-index: 10; /* Asegúrate de que estén visibles sobre otros elementos */
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 160px;
+  flex-wrap: wrap;
 }
 
-
-
-
 .ficha {
-  width: 55px; /* Tamaño de la ficha */
-  height: 55px;
-  transition: transform 0.2s; /* Animación al pasar el mouse */
+  width: 50px; /* Ajusta el tamaño de la ficha */
+  height: 50px; /* Ajusta el tamaño de la ficha */
 }
 
 .boton-robar, .boton-apostar,.boton-doblar,.boton-quedarse {
@@ -288,12 +279,14 @@
 
 
 .ficha-valor {
-  margin-top: 5px; /* Espaciado entre la ficha y su valor */
   color: white;
   font-size: 14px;
   font-family: 'Now-Medium', sans-serif;
   text-align: center;
+  margin: 0; /* Elimina cualquier margen residual */
 }
+
+
 
 .chat-container {
   position: absolute;
@@ -467,4 +460,5 @@
 .player-6 {
   top: 25%;
   left: 40%;
-}   
+}
+
