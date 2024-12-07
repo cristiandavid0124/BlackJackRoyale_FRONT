@@ -164,9 +164,7 @@ const BlackjackTable = () => {
         if (data.winners?.length) {
           toast.success(`Ganadores: ${data.winners.join(', ')}`);
           setTimeout(() => {
-            if (activeSocket && roomId) {
-              activeSocket.emit('restartGame', { roomId });
-            }
+            activeSocket.emit('restartGame', { roomId });
             setShowDecisionPrompt(true);
             hasDealtCardsRef.current = false; // Permite que Luigi reparta cartas nuevamente
             enApuestasToastShownRef.current = false; // Resetea para una nueva ronda
@@ -245,33 +243,6 @@ const BlackjackTable = () => {
     }
     return null;
   };
-  const repartirCartas = () => {
-    if (isDealing || hasDealtCardsRef.current) {
-      console.log("Luigi ya repartió o está repartiendo cartas. No se ejecuta de nuevo.");
-      return;
-    }
-
-    toast.info('¡Luigi está repartiendo las Cartas!');
-
-    setIsDealing(true);
-    hasDealtCardsRef.current = true; // Bloquea futuros repartos inmediatamente
-
-    setLuigiState('animated'); // Luigi animado
-
-    setTimeout(() => {
-      toast.info('Repartiendo cartas...');
-      setTimeout(() => {
-        console.log("Reparto de cartas completado, Luigi vuelve a estar estático.");
-        setLuigiState('static');
-        setIsDealing(false);
-      }, 2000); // Duración de la animación
-    }, 6000); // Tiempo inicial de espera antes de repartir
-  };
-
-  
-  
-
-  
 
   const seleccionarFicha = (color, valor) => {
     if (gameStatus !== 'EN_APUESTAS') {
@@ -347,7 +318,7 @@ const BlackjackTable = () => {
   };
 
   const renderChips = (chips) =>
-    chips.map((chip, index) => {
+    chips.map((chip) => {
       const chipImages = {
         NEGRO: negra,
         AZUL: azul,
@@ -356,7 +327,7 @@ const BlackjackTable = () => {
         ROJO: roja,
       };
       return (
-        <img key={index} src={chipImages[chip]} alt={`${chip} chip`} className="player-chip" />
+        <img key={chip} src={chipImages[chip]} alt={`${chip} chip`} className="player-chip" />
       );
     });
 
@@ -386,11 +357,12 @@ const BlackjackTable = () => {
 
       <div className="main-container">
         <div className="left-column">
-          <div className="card-slots">
-            {userCards.map((card, index) => (
-              <img key={index} src={card} alt={`Carta ${index + 1}`} className="card-slot" />
-            ))}
-          </div>
+        <div className="card-slots">
+          {userCards.map((card) => (
+            <img key={card} src={card} alt={`Carta ${card}`} className="card-slot" />
+          ))}
+        </div>
+
 
           <div className="button-row">
             <button className="boton-doblar" onClick={() => playerAction('double')}>
@@ -408,10 +380,11 @@ const BlackjackTable = () => {
           {Object.entries(valoresFichas)
             .sort(([, valorA], [, valorB]) => valorA - valorB) // Ordena de menor a mayor
             .map(([color, valor]) => (
-              <div
+              <button
                 key={color}
                 className="ficha-container"
                 onClick={() => seleccionarFicha(color, valor)}
+                style={{ all: 'unset' }} // Para quitar los estilos predeterminados del botón y estilizarlo como quieras
               >
                 <img
                   src={{
@@ -425,7 +398,7 @@ const BlackjackTable = () => {
                   className="ficha"
                 />
                 <span className="ficha-valor">${valor}</span>
-              </div>
+              </button>
             ))}
         </div>
           <button className="boton-apostar" onClick={apostar}>
@@ -452,11 +425,12 @@ const BlackjackTable = () => {
 
                     <div className="player-cards">
                       {showCardsRef.current &&
-                        playerInfo[player]?.hand.map((card, index) => {
+                        playerInfo[player]?.hand.map((card) => {
                           const cardImage = getBitmapImage(card.suit, card.rank);
+                          const cardKey = `${card.rank}-${card.suit}`; // Unique key based on rank and suit
                           return (
                             <img
-                              key={index}
+                              key={cardKey}
                               src={cardImage}
                               alt={`${card.rank} of ${card.suit}`}
                               className="player-card"
@@ -464,6 +438,7 @@ const BlackjackTable = () => {
                           );
                         })}
                     </div>
+
                     <div className="player-info1">
                 <p>
                     👤{' '}
@@ -484,9 +459,9 @@ const BlackjackTable = () => {
           socket={socket}
           roomId={roomId}
           userName={userName}
-          messages={messages} // Pasamos los mensajes actuales
-          onNewMessage={handleNewMessage} // Pasamos un callback para manejar nuevos mensajes
-          onMinimize={() => setIsChatOpen(false)} // Controla la minimización
+          messages={messages} 
+          onNewMessage={handleNewMessage}
+          onMinimize={() => setIsChatOpen(false)} 
         />
       ) : (
         <button className="chat-toggle-button" onClick={() => setIsChatOpen(true)}>

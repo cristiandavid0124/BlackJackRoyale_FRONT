@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import Header from "./Header";
 import Bitmap53 from "./img/Bitmap57.png"; 
 import "./css/History.css";
@@ -61,7 +60,6 @@ const calculateTotalBet = (chips) => {
 };
 
 const History = () => {
-  const navigate = useNavigate();
   const { userId } = useUser(); // Obtener userId del contexto
 
   const [history, setHistory] = useState([]);
@@ -97,7 +95,7 @@ const History = () => {
   const renderCards = (cards) =>
     cards.map((card, i) => (
       <img
-        key={i}
+        key={card.id}
         src={getBitmapImage(card.suit, card.rank)}
         alt={`${card.rank} de ${card.suit}`}
         className="card-image"
@@ -113,67 +111,73 @@ const History = () => {
     </div>
   );
 
+// Primero, fuera del return, gestionamos la lógica de qué contenido mostrar
+  let content;
+
+  if (loading) {
+    content = <div>Cargando historial...</div>;
+  } else if (history.length > 0) {
+    content = history.map((game) => {
+      const currentPlayer = game.players.find(
+        (player) => player.nickName === currentUserNickName
+      );
+      const totalBet = calculateTotalBet(currentPlayer?.chips || []);
+      const isWinner = game.winners.includes(currentUserNickName);
+      const resultClass = isWinner ? "result-win" : "result-loss";
+
+      const winnerName = game.winners.find(
+        (winner) => winner === "Dealer" || winner !== currentUserNickName
+      );
+      const winnerHand =
+        winnerName === "Dealer"
+          ? game.dealerHand
+          : game.players.find((player) => player.nickName === winnerName)?.hand || [];
+
+      return (
+        <div key={game.id} className="history-item">
+          {/* Contenedor izquierdo */}
+          <div className="result-container">
+            <p className={`result-header ${resultClass}`}>
+              {isWinner ? "Win" : "Loose"} {isWinner ? `+${totalBet}` : `-${totalBet}`}$
+            </p>
+            <div className="cards-container">
+              <div className="cards">
+                <p className="text-tu-mano">Tu mano:</p>
+                {renderCards(currentPlayer?.hand || [])}
+              </div>
+              <div className="cards">
+                {winnerHand.length > 0 &&
+                  renderWinnerHand(winnerName || "Dealer", winnerHand)}
+              </div>
+            </div>
+          </div>
+
+          {/* Contenedor derecho */}
+          <div className="players-container">
+            <h3>Players</h3>
+            <ul className="players-list">
+              {game.players.map((player, idx) => (
+                <li key={player.id}>{player.nickName}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      );
+    });
+  } else {
+    content = <div>No hay historial disponible.</div>;
+  }
+
+  // Luego, el return principal sigue igual, usando la variable 'content'
   return (
     <div className="history-container">
-      <Header activeButton="History" /> {/* El botón activo es "History" */}
-
+      <Header activeButton="History" />
       <div className="history-grid">
-        {loading ? (
-          <div>Cargando historial...</div>
-        ) : history.length > 0 ? (
-          history.map((game, index) => {
-            const currentPlayer = game.players.find(
-              (player) => player.nickName === currentUserNickName
-            );
-            const totalBet = calculateTotalBet(currentPlayer?.chips || []);
-            const isWinner = game.winners.includes(currentUserNickName);
-            const resultClass = isWinner ? "result-win" : "result-loss";
-
-            const winnerName = game.winners.find(
-              (winner) => winner === "Dealer" || winner !== currentUserNickName
-            );
-            const winnerHand =
-              winnerName === "Dealer"
-                ? game.dealerHand
-                : game.players.find((player) => player.nickName === winnerName)?.hand || [];
-
-            return (
-              <div key={index} className="history-item">
-                {/* Contenedor izquierdo */}
-                <div className="result-container">
-                  <p className={`result-header ${resultClass}`}>
-                    {isWinner ? "Win" : "Loose"} {isWinner ? `+${totalBet}` : `-${totalBet}`}$ 
-                  </p>
-                  <div className="cards-container">
-                    <div className="cards">
-                      <p className="text-tu-mano">Tu mano:</p>
-                      {renderCards(currentPlayer?.hand || [])}
-                    </div>
-                    <div className="cards">
-                      {winnerHand.length > 0 &&
-                        renderWinnerHand(winnerName || "Dealer", winnerHand)}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Contenedor derecho */}
-                <div className="players-container">
-                  <h3>Players</h3>
-                  <ul className="players-list">
-                    {game.players.map((player, idx) => (
-                      <li key={idx}>{player.nickName}</li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            );
-          })
-        ) : (
-          <div>No hay historial disponible.</div>
-        )}
+        {content} {/* Aquí solo se usa la variable que contiene el contenido */}
       </div>
     </div>
   );
-};
+
+  };
 
 export default History;

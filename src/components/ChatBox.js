@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 
 const ChatBox = ({ socket, roomId, userName, messages, onNewMessage, onMinimize }) => {
   const [message, setMessage] = useState(''); // Mensaje actual del input
@@ -43,10 +44,10 @@ const ChatBox = ({ socket, roomId, userName, messages, onNewMessage, onMinimize 
       </div>
       <div className="chat-messages">
         {messages.map((msg, index) => (
-          <div key={index} className="chat-message">
+          <div key={msg.id} className="chat-message">
             <strong>{msg.sender}: </strong>
             <span>{msg.message}</span>
-          </div>
+          </div>        
         ))}
       </div>
       <div className="chat-input">
@@ -60,6 +61,18 @@ const ChatBox = ({ socket, roomId, userName, messages, onNewMessage, onMinimize 
       </div>
     </div>
   );
+};
+
+ChatBox.propTypes = {
+  socket: PropTypes.object.isRequired,
+  roomId: PropTypes.string.isRequired,
+  userName: PropTypes.string.isRequired,
+  messages: PropTypes.arrayOf(PropTypes.shape({
+    sender: PropTypes.string.isRequired,
+    message: PropTypes.string.isRequired,
+  })).isRequired,
+  onNewMessage: PropTypes.func.isRequired,
+  onMinimize: PropTypes.func.isRequired,
 };
 
 export default ChatBox;

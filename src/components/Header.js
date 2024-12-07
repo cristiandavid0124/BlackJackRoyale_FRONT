@@ -4,6 +4,7 @@ import logo from './img/logo1.PNG';
 import './css/Header.css';
 import { useUser } from './UserContext';
 import { useMsal } from '@azure/msal-react';
+import PropTypes from 'prop-types';
 
 const Header = ({ activeButton, onNavigate }) => {
     const navigate = useNavigate();
@@ -52,6 +53,11 @@ const Header = ({ activeButton, onNavigate }) => {
             </nav>
         </header>
     );
+};
+
+Header.propTypes = {
+    activeButton: PropTypes.string.isRequired, // 'activeButton' debe ser una cadena
+    onNavigate: PropTypes.func, // 'onNavigate' debe ser una función opcional
 };
 
 export default Header;

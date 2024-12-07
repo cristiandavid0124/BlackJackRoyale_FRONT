@@ -55,11 +55,16 @@ const SelectTable = () => {
         console.log('Salas obtenidas del backend:', response.data);
         setTables(response.data);
       } catch (err) {
-        const errorMsg = err.response
-          ? `Error en la respuesta del servidor: ${err.response.status}`
-          : err.request
-          ? 'Error en la solicitud (sin respuesta del servidor).'
-          : `Error: ${err.message}`;
+        let errorMsg;
+        
+        if (err.response) {
+          errorMsg = `Error en la respuesta del servidor: ${err.response.status}`;
+        } else if (err.request) {
+          errorMsg = 'Error en la solicitud (sin respuesta del servidor).';
+        } else {
+          errorMsg = `Error: ${err.message}`;
+        }
+
         console.error(errorMsg);
         setError('Error al configurar el socket o cargar las salas. Por favor, intenta nuevamente.');
       } finally {
@@ -113,7 +118,7 @@ const SelectTable = () => {
       <Header activeButton={activeButton} onNavigate={setActiveButton} />
       <div className="main-content">
         <div className="select-table-container">
-          <h2>Selecciona una Mesa PROBANDO</h2>
+          <h2>Selecciona una Mesa </h2>
           <div className="table-options">
             {tables.map((table) => (
               <div key={table.roomId} className="table-card">
@@ -138,8 +143,8 @@ const SelectTable = () => {
                       Jugadores ({table.currentPlayers}/{table.maxPlayers})
                     </h3>
                     <ul className="players-list">
-                      {table.players.map((player, idx) => (
-                        <li key={idx} className="player-item">
+                      {table.players.map((player) => (
+                        <li key={player.id} className="player-item">
                           {player.nickName}
                         </li>
                       ))}
@@ -152,10 +157,10 @@ const SelectTable = () => {
               </div>
             ))}
           </div>
-          <div class="btn back-button-container">
-          <button onClick={handleGoBack} className="btn back-button">
-            Volver
-          </button>
+          <div className="btn back-button-container">
+            <button onClick={handleGoBack} className="btn back-button">
+              Volver
+            </button>
           </div>
         </div>
       </div>

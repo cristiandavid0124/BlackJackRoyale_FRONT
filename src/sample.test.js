@@ -20,7 +20,7 @@ describe('Sanitize configuration object', () => {
     });
 
     it('should contain authority uri', () => {
-        const regexUri = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
+        const regexUri = /[A-Z0-9%_+~#?&/=]{1,256}\.[A-Z0-9]{1,6}\b([A-Z0-9@:%_+~#?&/=]+)?/gi;
         expect(regexUri.test(msalConfig.auth.authority)).toBe(true);
     });
 

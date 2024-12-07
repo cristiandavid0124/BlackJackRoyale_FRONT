@@ -48,13 +48,11 @@
     color: #000000;
     background: #c5a880;
     border-radius: 100px;
-    font-size: 1em;
     font-weight: 700;
     cursor: pointer;
     border: none;
     font-family: 'Now-Medium', sans-serif;
     font-size: 19px;
-    font-weight: 700;
 }
 
 /* Texto de registro */
@@ -69,5 +67,4 @@
     color: #c5a880;
     text-decoration: underline;
 }
-
 

@@ -1,6 +1,8 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { io } from 'socket.io-client';
 import { useUser } from './UserContext';
+import PropTypes from 'prop-types';
+
 
 const SocketContext = createContext();
 
@@ -66,13 +68,13 @@ export const SocketProvider = ({ children }) => {
     const activeSocket = initializeSocket();
 
     return () => {
-      if (activeSocket && activeSocket.connected) {
+      if (activeSocket?.connected) {
         console.log('Manteniendo conexión activa al cambiar de componente.');
       } else {
         console.log('Desconectando socket al desmontar el contexto.');
-        if (activeSocket) activeSocket.disconnect();
+        activeSocket?.disconnect();
       }
-    };
+    };    
   }, [initializeSocket]);
 
   // Asegurarse de que el socket esté siempre disponible
@@ -84,8 +86,12 @@ export const SocketProvider = ({ children }) => {
   }, [socket, userId, userName, initializeSocket]);
 
   return (
-    <SocketContext.Provider value={{ socket, initializeSocket, isSocketReady }}>
+    <SocketContext.Provider value={useMemo(() => ({ socket, initializeSocket, isSocketReady }), [socket, initializeSocket, isSocketReady])}>
       {children}
     </SocketContext.Provider>
   );
+};
+
+SocketProvider.propTypes = {
+  children: PropTypes.node.isRequired, // Especificamos que 'children' debe ser un nodo React
 };

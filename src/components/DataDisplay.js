@@ -9,6 +9,7 @@ import pablo from './img/pablo.png';
 import logo from './img/logoo.png'; // Importa el logo
 import BotonAuth from './BotonAuth'; // Botón de autenticación
 import { useUser } from './UserContext';
+import PropTypes from 'prop-types';
 
 export const IdTokenData = (props) => {
   const { name, preferred_username } = getNameAndUsername(props.idTokenClaims);
@@ -174,7 +175,7 @@ export const IdTokenData = (props) => {
           <div className="footer-right">
             <div className="developer-cards">
               {developers.map((dev, index) => (
-                <div className="card" key={index}>
+                <div className="card" key={dev.id}>
                   <img src={dev.img} alt={dev.name} className="card-image" />
                   <p className="card-name">{dev.name}</p>
                 </div>
@@ -185,6 +186,10 @@ export const IdTokenData = (props) => {
       </div>
     </>
   );
+};
+
+IdTokenData.propTypes = {
+  idTokenClaims: PropTypes.object.isRequired,
 };
 
 export default IdTokenData;
