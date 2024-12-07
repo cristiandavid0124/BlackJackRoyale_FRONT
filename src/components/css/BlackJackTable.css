@@ -91,12 +91,14 @@
 }
 
 .left-column {
-  flex: 3; /* 30% del ancho */
+  position: relative;
+  flex: 3;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 20px;
 }
+
 
 .right-column {
   flex: 7; /* 70% del ancho */
@@ -120,12 +122,18 @@
 }
 
 .fichas {
+  position: absolute; /* O fixed si quieres que permanezcan visibles siempre */
+  bottom: 20px; /* Separa las fichas de la parte inferior */
+  left: 50%; /* Centra las fichas horizontalmente dentro del contenedor */
+  transform: translateX(-50%); /* Ajusta el centrado */
   display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin-top: 60px;
-  flex-wrap: wrap;
+  flex-direction: column; /* Organiza las fichas en columna */
+  align-items: center;
+  gap: 10px; /* Espaciado entre fichas */
+  z-index: 10; /* Asegura que estén sobre otros elementos */
 }
+
+
 
 .ficha {
   width: 55px; /* Tamaño de la ficha */
