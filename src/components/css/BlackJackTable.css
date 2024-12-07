@@ -129,7 +129,7 @@
   display: flex;
   justify-content: center;
   gap: 1rem;
-  margin-top: 45%; /* Margen superior ajustado con porcentaje */
+  margin-top: 43%; /* Margen superior ajustado con porcentaje */
   flex-wrap: wrap;
 }
 
@@ -150,23 +150,36 @@
   background-color: rgba(0, 0, 0, 0.8); /* Fondo semitransparente opcional */
   z-index: 1000; /* Asegura que esté por encima de otros elementos */
 }
-.boton-robar, .boton-apostar,.boton-doblar,.boton-quedarse {  
-  margin-top: 40px;
-  background-color: #000000;
-  color: #ffffff;
-  padding: 10px 20px;
-  width: 50%;
-  height: 3em; 
-  border-radius: 50px;
-  cursor: pointer;
-  border: none;
-  font-family: 'Now-Medium', sans-serif;
-  font-weight: bold;
-  font-size: 0.8em;
+.boton-robar, .boton-apostar, .boton-doblar, .boton-quedarse {
+  margin-top: 10px;
 
   
+  background-color: #000000; /* Color azul vibrante */
+  color: #ffffff;
+  padding: 15px 30px; /* Tamaño del botón */
+  width: auto; /* Ajusta al contenido */
+  height: auto;
+  border-radius: 25px; /* Bordes redondeados */
+  cursor: pointer;
+  border: none; /* Sin borde */
+  font-family: 'Now-Medium', sans-serif;
+  font-weight: bold;
+  font-size: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* Sombra */
+  transition: all 0.3s ease; /* Animación suave */
+}
+.boton-robar:hover, .boton-apostar:hover, .boton-doblar:hover, .boton-quedarse:hover {
+  background-color: #044722; /* Color más oscuro al pasar el mouse */
+  transform: scale(1.05); /* Aumenta ligeramente el tamaño */
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.5); /* Sombra más pronunciada */
 }
 
+/* Efecto al hacer clic */
+.boton-robar:active, .boton-apostar:active, .boton-doblar:active, .boton-quedarse:active {
+  background-color: #044722; /* Color más oscuro al hacer clic */
+  transform: scale(0.95); /* Reduce ligeramente el tamaño */
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2); /* Sombra más pequeña */
+}
 
 .dialog-repartiendo {
   position: fixed;

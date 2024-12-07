@@ -35,7 +35,14 @@ const Login = () => {
                         </button>
                     </div>
                     <p className="register-text">
-                        ¿No tienes una cuenta? <a href="/register">Regístrate</a>
+                        ¿No tienes una cuenta?{' '}
+                        <a 
+                            href="https://signup.live.com/signup?mkt=es-es&lic=1&uaid=6d064110809e409490c4ea17c76acd74" 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                        >
+                            Regístrate
+                        </a>
                     </p>
                 </div>
             </div>
