@@ -128,7 +128,7 @@
 .fichas {
   display: flex;
   justify-content: center;
-  gap: 1rem;
+  gap: 2rem;
   margin-top: 43%; /* Margen superior ajustado con porcentaje */
   flex-wrap: wrap;
 }
