@@ -89,6 +89,7 @@ const BlackjackTable = () => {
   const [isChatOpen, setIsChatOpen] = useState(false); // Estado para controlar la visibilidad del chat
   const [messages, setMessages] = useState([]); // Mueve el estado de mensajes al componente padre
   const enApuestasToastShownRef = useRef(false);
+  const [dealerCardHidden, setDealerCardHidden] = useState(true);
 
 
 
@@ -168,6 +169,7 @@ const BlackjackTable = () => {
             setShowDecisionPrompt(true);
             hasDealtCardsRef.current = false; // Permite que Luigi reparta cartas nuevamente
             enApuestasToastShownRef.current = false; // Resetea para una nueva ronda
+            setDealerCardHidden(true); // Oculta la carta del dealer para la próxima ronda
 
             setIsDealing(false); // Asegúrate de que no haya reparto en curso
             setLuigiState('static'); // Regresa a Luigi a estado estático
@@ -204,6 +206,10 @@ const BlackjackTable = () => {
     };
   
     setPlayerInfo(updatedPlayerInfo);
+
+    if (gameState.winners?.length) {
+      setDealerCardHidden(false); // Revela la carta
+    }
   
     if (status === 'EN_JUEGO' && !hasDealtCardsRef.current) {
       console.log('Estado EN_JUEGO detectado. Iniciando animación de reparto...');
@@ -423,20 +429,27 @@ const BlackjackTable = () => {
                       </div>
     
                       <div className="player-cards">
-                        {showCardsRef.current &&
-                          playerInfo[player]?.hand.map((card) => {
-                            const cardImage = getBitmapImage(card.suit, card.rank);
-                            const cardKey = `${card.rank}-${card.suit}`; // Unique key based on rank and suit
-                            return (
-                              <img
-                                key={cardKey}
-                                src={cardImage}
-                                alt={`${card.rank} of ${card.suit}`}
-                                className="player-card"
-                              />
-                            );
-                          })}
-                      </div>
+  {showCardsRef.current &&
+    playerInfo[player]?.hand.map((card, index) => {
+      const isDealer = player === 6; // Verifica si es el dealer
+      const cardImage = isDealer && dealerCardHidden && index === 0 
+        ? Bitmap53 
+        : getBitmapImage(card.suit, card.rank); // Oculta la primera carta del dealer únicamente
+      const cardKey = `${card.rank}-${card.suit}-${index}-${player}`; // Llave única
+      return (
+        <img
+          key={cardKey}
+          src={cardImage}
+          alt={
+            isDealer && dealerCardHidden && index === 0
+              ? "Hidden card"
+              : `${card.rank} of ${card.suit}`
+          }
+          className="player-card"
+        />
+      );
+    })}
+</div>
     
                       <div className="player-info1">
                         <p>
@@ -475,3 +488,4 @@ const BlackjackTable = () => {
 };
 
 export default BlackjackTable;
+

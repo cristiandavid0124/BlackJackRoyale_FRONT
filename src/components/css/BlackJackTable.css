@@ -6,6 +6,12 @@
   background-color: #066235;
 }
 
+.player-card.hidden {
+  background-color: #444; /* Color de fondo para indicar que está oculta */
+  border: 2px solid #222;
+  border-radius: 5px;
+}
+
 .decision-prompt {
   position: fixed; /* Fija el prompt en la pantalla */
   top: 50%; /* Centra verticalmente */
@@ -123,7 +129,7 @@
   display: flex;
   justify-content: center;
   gap: 1rem;
-  margin-top: 160px;
+  margin-top: 45%; /* Margen superior ajustado con porcentaje */
   flex-wrap: wrap;
 }
 
@@ -131,7 +137,19 @@
   width: 50px; /* Ajusta el tamaño de la ficha */
   height: 50px; /* Ajusta el tamaño de la ficha */
 }
-
+.fichas-y-apostar {
+  position: fixed;
+  bottom: 0; /* Fija el contenedor en la parte inferior */
+  left: 0; /* Alinea a la izquierda */
+  width: 100%; /* Ocupa todo el ancho de la pantalla */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem; /* Espaciado entre las fichas y el botón */
+  padding: 1rem;
+  background-color: rgba(0, 0, 0, 0.8); /* Fondo semitransparente opcional */
+  z-index: 1000; /* Asegura que esté por encima de otros elementos */
+}
 .boton-robar, .boton-apostar,.boton-doblar,.boton-quedarse {  
   margin-top: 40px;
   background-color: #000000;
