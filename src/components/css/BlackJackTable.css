@@ -132,11 +132,11 @@
   height: 50px; /* Ajusta el tamaño de la ficha */
 }
 
-.boton-robar, .boton-apostar,.boton-doblar,.boton-quedarse {
+.boton-robar, .boton-apostar,.boton-doblar,.boton-quedarse {  
+  margin-top: 40px;
   background-color: #000000;
   color: #ffffff;
   padding: 10px 20px;
-  margin-top: 20px;
   width: 50%;
   height: 3em; 
   border-radius: 50px;
@@ -272,9 +272,12 @@
 .ficha-container {
   display: flex;
   flex-direction: column; /* Organiza la ficha y su valor en columna */
-  align-items: center; /* Centra el texto debajo de la ficha */
+  align-items: center;    /* Centra el contenido horizontalmente */
   cursor: pointer;
-  margin: 0; /* Asegúrate de que no haya márgenes extra */
+  margin: 0;              /* Elimina márgenes extra */
+  background: none;      /* Elimina el fondo */
+  border: none;          /* Elimina los bordes */
+  padding: 0;            /* Elimina el padding */
 }
 
 

@@ -331,147 +331,147 @@ const BlackjackTable = () => {
       );
     });
 
-  return (
-    <div className="table-container">
-      <ToastContainer />
-      {renderDecisionPrompt()}
-      {renderDealingDialog()} 
-      <header className="table-header">
-        <div className="header-logo">
-          <img src={logo} alt="Logo" className="logo-header" />
-        </div>
-        <div className="header-info">
-          <div className="header-info-left">
-            <p>Saldo: {saldo !== null ? saldo : 'Cargando...'}</p>
+    return (
+      <div className="table-container">
+        <ToastContainer />
+        {renderDecisionPrompt()}
+        {renderDealingDialog()} 
+        <header className="table-header">
+          <div className="header-logo">
+            <img src={logo} alt="Logo" className="logo-header" />
           </div>
-          <div className="header-info-center">
-            <p>Apuesta: {apuestaActual !== null ? apuestaActual : 'Cargando...'}</p>
-          </div>
-          <div className="header-info-right">
-            <button className="sign-out-button" onClick={handleSignOut}>
-              <img src={signout} alt="Sign Out" className="sign-out-icon" />
-            </button>
-          </div>
-        </div>
-      </header>
-
-      <div className="main-container">
-        <div className="left-column">
-        <div className="card-slots">
-          {userCards.map((card) => (
-            <img key={card} src={card} alt={`Carta ${card}`} className="card-slot" />
-          ))}
-        </div>
-
-
-          <div className="button-row">
-            <button className="boton-doblar" onClick={() => playerAction('double')}>
-              DOUBLE
-            </button>
-            <button className="boton-robar" onClick={() => playerAction('hit')}>
-              HIT
-            </button>
-            <button className="boton-quedarse" onClick={() => playerAction('stand')}>
-              STAND
-            </button>
-          </div>
-
-          <div className="fichas">
-          {Object.entries(valoresFichas)
-            .sort(([, valorA], [, valorB]) => valorA - valorB) // Ordena de menor a mayor
-            .map(([color, valor]) => (
-              <button
-                key={color}
-                className="ficha-container"
-                onClick={() => seleccionarFicha(color, valor)}
-                style={{ all: 'unset' }} // Para quitar los estilos predeterminados del botón y estilizarlo como quieras
-              >
-                <img
-                  src={{
-                    AZUL: azul,
-                    AMARILLO: amarillo,
-                    VERDE: verde,
-                    ROJO: roja,
-                    NEGRO: negra,
-                  }[color]}
-                  alt={`Ficha ${color}`}
-                  className="ficha"
-                />
-                <span className="ficha-valor">${valor}</span>
+          <div className="header-info">
+            <div className="header-info-left">
+              <p>Saldo: {saldo !== null ? saldo : 'Cargando...'}</p>
+            </div>
+            <div className="header-info-center">
+              <p>Apuesta: {apuestaActual !== null ? apuestaActual : 'Cargando...'}</p>
+            </div>
+            <div className="header-info-right">
+              <button className="sign-out-button" onClick={handleSignOut}>
+                <img src={signout} alt="Sign Out" className="sign-out-icon" />
               </button>
-            ))}
-        </div>
-          <button className="boton-apostar" onClick={apostar}>
-            Apostar
-          </button>
-        </div>
-
-        <div className="right-column">
-          <div className="mesa-container">
-          <img
-              src={luigiState === 'static' ? luigiquieto : luigiCasino}
-              alt="Luigi"
-              className="luigi-gif"
-            />
-            <img src={mesa} alt="mesa" className="mesa" />
-
-            {[1, 2, 3, 4, 5, 6].map((player) => (
-              <div key={player} className={`player-slot player-${player}`}>
-                {playerInfo[player] && (
-                  <>
-                    <div className="player-chips">
-                      {renderChips(playerInfo[player]?.chips || [])}
-                    </div>
-
-                    <div className="player-cards">
-                      {showCardsRef.current &&
-                        playerInfo[player]?.hand.map((card) => {
-                          const cardImage = getBitmapImage(card.suit, card.rank);
-                          const cardKey = `${card.rank}-${card.suit}`; // Unique key based on rank and suit
-                          return (
-                            <img
-                              key={cardKey}
-                              src={cardImage}
-                              alt={`${card.rank} of ${card.suit}`}
-                              className="player-card"
-                            />
-                          );
-                        })}
-                    </div>
-
-                    <div className="player-info1">
-                <p>
-                    👤{' '}
-                   {playerInfo[player]?.name || (player === 6 ? 'Luigi' : 'Esperando...')}
-                </p>
-                     {player !== 6 && <p>Apuesta: ${playerInfo[player]?.bet || ''}</p>}
+            </div>
+          </div>
+        </header>
+    
+        <div className="main-container">
+          <div className="left-column">
+            <div className="card-slots">
+              {userCards.map((card) => (
+                <img key={card} src={card} alt={`Carta ${card}`} className="card-slot" />
+              ))}
+            </div>
+    
+            <div className="button-row">
+              <button className="boton-doblar" onClick={() => playerAction('double')}>
+                DOUBLE
+              </button>
+              <button className="boton-robar" onClick={() => playerAction('hit')}>
+                HIT
+              </button>
+              <button className="boton-quedarse" onClick={() => playerAction('stand')}>
+                STAND
+              </button>
+            </div>
+    
+            <div className="fichas">
+              {Object.entries(valoresFichas)
+                .sort(([, valorA], [, valorB]) => valorA - valorB) // Ordena de menor a mayor
+                .map(([color, valor]) => (
+                  <button
+                    key={color}
+                    className="ficha-container"
+                    onClick={() => seleccionarFicha(color, valor)}
+                  >
+                    <img
+                      src={{
+                        AZUL: azul,
+                        AMARILLO: amarillo,
+                        VERDE: verde,
+                        ROJO: roja,
+                        NEGRO: negra,
+                      }[color]}
+                      alt={`Ficha ${color}`}
+                      className="ficha"
+                    />
+                    <span className="ficha-valor">${valor}</span>
+                  </button>
+                ))}
+            </div>
+    
+            <button className="boton-apostar" onClick={apostar}>
+              Apostar
+            </button>
+          </div>
+    
+          <div className="right-column">
+            <div className="mesa-container">
+              <img
+                src={luigiState === 'static' ? luigiquieto : luigiCasino}
+                alt="Luigi"
+                className="luigi-gif"
+              />
+              <img src={mesa} alt="mesa" className="mesa" />
+    
+              {[1, 2, 3, 4, 5, 6].map((player) => (
+                <div key={player} className={`player-slot player-${player}`}>
+                  {playerInfo[player] && (
+                    <>
+                      <div className="player-chips">
+                        {renderChips(playerInfo[player]?.chips || [])}
+                      </div>
+    
+                      <div className="player-cards">
+                        {showCardsRef.current &&
+                          playerInfo[player]?.hand.map((card) => {
+                            const cardImage = getBitmapImage(card.suit, card.rank);
+                            const cardKey = `${card.rank}-${card.suit}`; // Unique key based on rank and suit
+                            return (
+                              <img
+                                key={cardKey}
+                                src={cardImage}
+                                alt={`${card.rank} of ${card.suit}`}
+                                className="player-card"
+                              />
+                            );
+                          })}
+                      </div>
+    
+                      <div className="player-info1">
+                        <p>
+                          👤{' '}
+                          {playerInfo[player]?.name || (player === 6 ? 'Luigi' : 'Esperando...')}
+                        </p>
+                        {player !== 6 && <p>Apuesta: ${playerInfo[player]?.bet || ''}</p>}
+                      </div>
+                    </>
+                  )}
                 </div>
-
-                  </>
-                )}
-              </div>
-            ))}
+              ))}
+            </div>
+          </div>
+    
+          <div className={`chat-container ${isChatOpen ? 'open' : 'closed'}`}>
+            {isChatOpen ? (
+              <ChatBox
+                socket={socket}
+                roomId={roomId}
+                userName={userName}
+                messages={messages} // Pasamos los mensajes actuales
+                onNewMessage={handleNewMessage} // Pasamos un callback para manejar nuevos mensajes
+                onMinimize={() => setIsChatOpen(false)} // Controla la minimización
+              />
+            ) : (
+              <button className="chat-toggle-button" onClick={() => setIsChatOpen(true)}>
+                💬
+              </button>
+            )}
           </div>
         </div>
-        <div className={`chat-container ${isChatOpen ? 'open' : 'closed'}`}>
-      {isChatOpen ? (
-        <ChatBox
-          socket={socket}
-          roomId={roomId}
-          userName={userName}
-          messages={messages} 
-          onNewMessage={handleNewMessage}
-          onMinimize={() => setIsChatOpen(false)} 
-        />
-      ) : (
-        <button className="chat-toggle-button" onClick={() => setIsChatOpen(true)}>
-          💬
-        </button>
-      )}
-    </div>
       </div>
-    </div>
-  );
+    );
+    
 };
 
 export default BlackjackTable;
