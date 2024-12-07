@@ -120,22 +120,17 @@
 }
 
 .fichas {
-  position: fixed; /* Fija el contenedor en una posición relativa a la ventana */
-  bottom: 20px; /* Margen desde la parte inferior */
-  left: 20px; /* Margen desde la parte izquierda */
   display: flex;
-  flex-direction: column; /* Organiza las fichas verticalmente */
-  align-items: center; /* Centra las fichas horizontalmente en su contenedor */
-  gap: 10px; /* Espaciado entre las fichas */
-  z-index: 100; /* Asegura que esté sobre otros elementos */
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 60px;
+  flex-wrap: wrap;
 }
 
-
 .ficha {
-  width: 55px;
+  width: 55px; /* Tamaño de la ficha */
   height: 55px;
-  cursor: pointer;
-  transition: transform 0.2s;
+  transition: transform 0.2s; /* Animación al pasar el mouse */
 }
 
 .boton-robar, .boton-apostar,.boton-doblar,.boton-quedarse {
@@ -277,17 +272,18 @@
 
 .ficha-container {
   display: flex;
-  flex-direction: column; /* Alinea verticalmente las fichas y los valores */
-  align-items: center; /* Centra los elementos dentro del contenedor */
-  cursor: pointer; /* Cambia el cursor al pasar por encima */
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  margin-top: 130px;
 }
-
 
 .ficha-valor {
   margin-top: 5px; /* Espaciado entre la ficha y su valor */
   color: white; /* Color del texto */
   font-size: 14px; /* Tamaño del texto */
   font-family: 'Now-Medium', sans-serif;
+  text-align: center; /* Centra el texto del valor */
 }
 
 .chat-container {
@@ -462,4 +458,4 @@
 .player-6 {
   top: 25%;
   left: 40%;
-}
+}   
